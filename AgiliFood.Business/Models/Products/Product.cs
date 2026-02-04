@@ -1,20 +1,18 @@
-﻿namespace AgiliFood.Business.Models.Product;
+﻿using AgiliFood.Business.Models.Weights;
+
+namespace AgiliFood.Business.Models.Products;
 
 public class Product
 {
     public long Id { get; private set; }
 
-    public string Name { get; private set; }
+    public string? Name { get; private set; }
 
     public string? Description { get; private set; }
 
     public string? Brand { get; private set; }
 
-    public string Flavor { get; private set; }
-
-    public double Weight { get; private set; }
-
-    public WeightUnitEnum WeightUnit { get; set; }
+    public string? Flavor { get; private set; }
 
     public decimal Price { get; private set; }
 
@@ -24,19 +22,23 @@ public class Product
 
     public string? Image { get; private set; }
 
+    public long IdWeight { get; private set; }
+
     public int ProductCategoryId { get; private set; }
+
+    public Weight Weight { get; private set; }
 
     public ProductCategory? ProductCategory { get; private set; }
 
     protected Product() { } 
 
     public Product(string name, string? description, string? brand, string flavor,
-                  double weight, decimal price, bool isActive, string? barCode,
-                  string? image, int productCategoryId, WeightUnitEnum weightUnit)
+                   decimal price, bool isActive, string? barCode,  string? image,
+                   int productCategoryId, Weight weight)
     {
         SetName(name);
         SetFlavor(flavor);
-        SetWeight(weight, weightUnit);
+        SetWeight(weight);
         ChangePrice(price);
 
         Description = description;
@@ -58,18 +60,17 @@ public class Product
 
     public void SetFlavor(string flavor)
     {
-        if (string.IsNullOrWhiteSpace(flavor))
-            throw new ArgumentException("O sabor é obrigatório.", nameof(flavor));
-
         Flavor = flavor;
     }
 
-    public void SetWeight(double weight, WeightUnitEnum weightUnit)
+    public void SetWeight(Weight weight)
     {
-        if (weight <= 0)
+        if (weight == null)
+            throw new ArgumentNullException(nameof(weight), "O peso do produto é obrigatório.");
+
+        if (weight.Amount <= 0)
             throw new ArgumentException("O peso do produto deve ser maior que zero.", nameof(weight));
 
-        WeightUnit = weightUnit;
         Weight = weight;
     }
 

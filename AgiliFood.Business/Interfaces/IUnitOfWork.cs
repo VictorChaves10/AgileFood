@@ -7,5 +7,6 @@
 
         IProductRepository ProductRepository { get; }
         IProductCategoryRepository ProductCategoryRepository { get; }
+        IStockItemRepository StockItemRepository { get; }
     }
 }

@@ -4,6 +4,6 @@ public interface IStockItemService
 {
     Task<StockItem> GetByIdAsync(int id);
 
-    Task<List<StockItem>> GetAllAsync();
+    Task<IEnumerable<StockItem>> GetAllAsync();
 
 }

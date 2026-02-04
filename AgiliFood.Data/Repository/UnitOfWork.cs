@@ -12,6 +12,15 @@ public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
 
     private IProductCategoryRepository _productCategoryRepository;
 
+    private IStockItemRepository _stockItemRepository;
+
+    public IStockItemRepository StockItemRepository
+    {
+        get
+        {
+            return _stockItemRepository ??= new StockItemRepository(_context);
+        }
+    }
 
     public IProductRepository ProductRepository
     {

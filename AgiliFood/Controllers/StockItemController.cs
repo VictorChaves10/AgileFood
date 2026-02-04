@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AgiliFood.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/stock-item")]
 [ApiController]
 public class StockItemController : ControllerBase
 {
@@ -17,7 +17,11 @@ public class StockItemController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
+        var stockItems = await _service.GetAllAsync();
 
-        return Ok("StockItemController - GetAll");
+        if (stockItems == null || !stockItems.Any())
+            return NotFound("No stock items found.");
+
+        return Ok(stockItems);
     }
 }

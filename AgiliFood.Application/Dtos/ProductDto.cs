@@ -1,5 +1,4 @@
-﻿using AgiliFood.Business.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace AgiliFood.Application.Dtos;
 

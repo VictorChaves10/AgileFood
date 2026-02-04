@@ -23,8 +23,8 @@ public class StockItem
 
     public StockItem(long productId, int initialQuantity, DateTime? expirationDate = null)
     {
-        if (initialQuantity < 0)
-            throw new ArgumentException("A quantidade inicial não pode ser negativa.", nameof(initialQuantity));
+        if (initialQuantity <= 0)
+            throw new ArgumentException("A quantidade inicial dever ser maior que zero.", nameof(initialQuantity));
 
         ProductId = productId;
         Quantity = initialQuantity;

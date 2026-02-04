@@ -1,11 +1,10 @@
 ﻿using AgiliFood.Application.Dtos;
 using AgiliFood.Application.Interfaces;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgiliFood.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/product-category")]
 [ApiController]
 public class ProductCategoryController : ControllerBase
 {
@@ -29,7 +28,7 @@ public class ProductCategoryController : ControllerBase
         return Ok(categories);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
         var category = await _service.GetByIdAsync(id);
@@ -52,7 +51,7 @@ public class ProductCategoryController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = createdCategory.Id }, createdCategory);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] ProductCategoryDto categoryDto)
     {
         if (categoryDto == null || categoryDto.Id != id)
@@ -67,7 +66,7 @@ public class ProductCategoryController : ControllerBase
         return Ok(updatedCategory);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
         var deleted = await _service.DeleteAsync(id);

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AgiliFood.Api.Controllers;
 
-[Route("api/[controller]")]
+[Route("api/product")]
 [ApiController]
 public class ProductsController : ControllerBase
 {
@@ -26,7 +26,7 @@ public class ProductsController : ControllerBase
         return Ok(products);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
         var product = await _service.GetByIdAsync(id);
@@ -50,7 +50,7 @@ public class ProductsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = createdProduct.Id }, createdProduct);
     }
 
-    [HttpPut("{id}")]
+    [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, [FromBody] ProductDto productDto)
     {
         if (productDto == null || productDto.Id != id)
@@ -61,18 +61,16 @@ public class ProductsController : ControllerBase
         if (updatedProduct == null)
             return NotFound("Produto não localizado");
 
-
         return Ok(updatedProduct);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
         var deleted = await _service.DeleteAsync(id);
 
         if (!deleted)
             return NotFound("Produto não localizado");
-
 
         return NoContent();
     }

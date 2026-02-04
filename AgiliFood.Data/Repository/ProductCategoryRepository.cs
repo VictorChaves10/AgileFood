@@ -16,8 +16,8 @@ public class ProductCategoryRepository : RepositoryBase<ProductCategory>, IProdu
     public async Task<ProductCategory> GetAllWithProductsAsync(int id)
     {
         var entity = await _context.ProductCategories.AsNoTracking()
-                                             .Include(pc => pc.Products)
-                                             .FirstOrDefaultAsync(pc => pc.Id == id);
+                                                    .Include(pc => pc.Products)
+                                                    .FirstOrDefaultAsync(pc => pc.Id == id);
 
         return entity;
     }

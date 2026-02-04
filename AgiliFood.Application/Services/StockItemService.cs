@@ -12,9 +12,10 @@ public class StockItemService : IStockItemService
         _unitOfWork = unitOfWork;
     }
 
-    public Task<List<StockItem>> GetAllAsync()
+    public async Task<IEnumerable<StockItem>> GetAllAsync()
     {
-        throw new NotImplementedException();
+        var stockItems = await _unitOfWork.StockItemRepository.GetAllAsync();
+        return stockItems;
     }
 
     public Task<StockItem> GetByIdAsync(int id)
