@@ -1,4 +1,4 @@
-﻿using AgiliFood.Business.Models.Product;
+﻿using AgiliFood.Business.Models.Products;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -27,12 +27,6 @@ public class ProductMapping : IEntityTypeConfiguration<Product>
         builder.Property(p => p.IsActive)
                .IsRequired();
 
-        builder.Property(p => p.Weight)
-               .IsRequired();
-
-        builder.Property(p => p.WeightUnit)
-                .IsRequired();
-
         builder.Property(p => p.BarCode)
                .HasMaxLength(50);
 
@@ -53,6 +47,17 @@ public class ProductMapping : IEntityTypeConfiguration<Product>
                .WithMany(c => c.Products)
                .HasForeignKey(p => p.ProductCategoryId)
                .OnDelete(DeleteBehavior.Restrict);
+
+        builder.OwnsOne(p => p.Weight, weight =>
+        {
+            weight.Property(w => w.Amount)
+                  .IsRequired()
+                  .HasColumnName("WeightAmount");
+
+            weight.Property(w => w.Unit)
+                  .IsRequired()
+                  .HasColumnName("WeightUnit");
+        });
     }
 
 }

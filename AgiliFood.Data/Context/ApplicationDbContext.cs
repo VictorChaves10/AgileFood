@@ -1,4 +1,4 @@
-﻿using AgiliFood.Business.Models.Product;
+﻿using AgiliFood.Business.Models.Products;
 using AgiliFood.Business.Models.Stock;
 using Microsoft.EntityFrameworkCore;
 

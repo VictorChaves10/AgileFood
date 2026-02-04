@@ -1,4 +1,4 @@
-﻿using AgiliFood.Business.Models.Product;
+﻿using AgiliFood.Business.Models.Products;
 using AgiliFood.Business.Models.Stock;
 
 public class StockItem
@@ -7,7 +7,7 @@ public class StockItem
 
     public long ProductId { get; private set; }
 
-    public Product Product { get; private set; }
+    public Product? Product { get; private set; }
 
     public int Quantity { get; private set; }
 
@@ -17,24 +17,20 @@ public class StockItem
 
     private readonly List<StockMovement> _movements = new();
 
-    public IReadOnlyCollection<StockMovement> Movements => _movements.AsReadOnly();
+    public IReadOnlyCollection<StockMovement> Movements => _movements;
 
     protected StockItem() { }
 
-    public StockItem(long productId, int initialQuantity, DateTime? expirationDate = null)
+    public StockItem(string stockCode, long productId, int initialQuantity, DateTime? expirationDate = null)
     {
-        if (initialQuantity <= 0)
-            throw new ArgumentException("A quantidade inicial dever ser maior que zero.", nameof(initialQuantity));
-
         ProductId = productId;
         Quantity = initialQuantity;
-        ExpirationDate = expirationDate;
         CreatedAt = DateTime.UtcNow;
-
-        _movements.Add(new StockMovement(StockMovementType.Entry, initialQuantity, "Estoque inicial"));
+        SetExpirationDate(expirationDate);
+        RegisterEntry(initialQuantity, "Estoque inicial");
     }
 
-    public void AddStock(int quantity, string reason = "Entrada")
+    public void RegisterEntry(int quantity, string reason = "Entrada")
     {
         if (quantity <= 0)
             throw new ArgumentException("A quantidade adicionada deve ser maior que zero.", nameof(quantity));
@@ -43,7 +39,7 @@ public class StockItem
         _movements.Add(new StockMovement(StockMovementType.Entry, quantity, reason));
     }
 
-    public void RemoveStock(int quantity, string reason = "Saída")
+    public void RegisterExit(int quantity, string reason = "Saída")
     {
         if (quantity <= 0)
             throw new ArgumentException("A quantidade removida deve ser maior que zero.", nameof(quantity));
@@ -54,4 +50,13 @@ public class StockItem
         Quantity -= quantity;
         _movements.Add(new StockMovement(StockMovementType.Exit, quantity, reason));
     }
+
+    private void SetExpirationDate(DateTime? expirationDate)
+    {
+        if (expirationDate.HasValue && expirationDate.Value <= DateTime.UtcNow)
+            throw new ArgumentException("Data de validade deve ser futura.");
+
+        ExpirationDate = expirationDate;
+    }
+
 }

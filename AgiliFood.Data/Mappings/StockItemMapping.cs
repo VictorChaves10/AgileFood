@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace AgiliFood.Data.Mappings;
-
 public class StockItemMapping : IEntityTypeConfiguration<StockItem>
 {
     public void Configure(EntityTypeBuilder<StockItem> builder)
@@ -10,7 +8,7 @@ public class StockItemMapping : IEntityTypeConfiguration<StockItem>
         builder.ToTable("StockItems");
 
         builder.HasKey(si => si.Id);
-        
+
         builder.Property(si => si.ProductId)
                .IsRequired();
 
@@ -22,11 +20,18 @@ public class StockItemMapping : IEntityTypeConfiguration<StockItem>
         builder.Property(si => si.CreatedAt)
                .IsRequired();
 
-        builder.HasOne(si => si.Product);
+        builder.HasOne(si => si.Product)
+               .WithMany()
+               .HasForeignKey(si => si.ProductId)
+               .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(si => si.Movements)
                .WithOne()
-               .HasForeignKey("StockItemId")
+               .HasForeignKey(sm => sm.StockItemId)
                .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Metadata
+               .FindNavigation(nameof(StockItem.Movements))!
+               .SetPropertyAccessMode(PropertyAccessMode.Field);
     }
 }

@@ -22,8 +22,6 @@ public class Product
 
     public string? Image { get; private set; }
 
-    public long IdWeight { get; private set; }
-
     public int ProductCategoryId { get; private set; }
 
     public Weight Weight { get; private set; }
@@ -34,11 +32,11 @@ public class Product
 
     public Product(string name, string? description, string? brand, string flavor,
                    decimal price, bool isActive, string? barCode,  string? image,
-                   int productCategoryId, Weight weight)
+                   int productCategoryId, double weightAmount, WeightUnitEnum weightUnit)
     {
-        SetName(name);
-        SetFlavor(flavor);
-        SetWeight(weight);
+        ChangeName(name);
+        ChangeFlavor(flavor);
+        ChangeWeight(weightAmount, weightUnit);
         ChangePrice(price);
 
         Description = description;
@@ -50,7 +48,7 @@ public class Product
     }
 
 
-    public void SetName(string name)
+    public void ChangeName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("O nome do produto é obrigatório.", nameof(name));
@@ -58,20 +56,14 @@ public class Product
         Name = name;
     }
 
-    public void SetFlavor(string flavor)
+    public void ChangeFlavor(string flavor)
     {
         Flavor = flavor;
     }
 
-    public void SetWeight(Weight weight)
+    public void ChangeWeight(double amount, WeightUnitEnum unit)
     {
-        if (weight == null)
-            throw new ArgumentNullException(nameof(weight), "O peso do produto é obrigatório.");
-
-        if (weight.Amount <= 0)
-            throw new ArgumentException("O peso do produto deve ser maior que zero.", nameof(weight));
-
-        Weight = weight;
+        Weight = new Weight(amount, unit);
     }
 
     public void ChangePrice(decimal newPrice)

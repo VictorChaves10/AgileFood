@@ -10,13 +10,13 @@ public class StockMovement
 
     public int Quantity { get; private set; }
 
-    public string Reason { get; private set; }
+    public string? Reason { get; private set; }
 
     public DateTime Date { get; private set; }
 
     protected StockMovement() { }
 
-    public StockMovement(StockMovementType type, int quantity, string reason)
+    internal StockMovement(StockMovementType type, int quantity, string reason)
     {
         Type = type;
         Quantity = quantity;

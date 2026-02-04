@@ -27,10 +27,5 @@ public class StockMovementMapping : IEntityTypeConfiguration<StockMovement>
         builder.Property(sm => sm.Date)
                .IsRequired();
 
-        builder.HasOne<StockItem>()
-               .WithMany(si => si.Movements)
-               .HasForeignKey(sm => sm.StockItemId)
-               .OnDelete(DeleteBehavior.Cascade);
-
     }
 }

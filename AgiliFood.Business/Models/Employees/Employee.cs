@@ -1,4 +1,4 @@
-﻿namespace AgiliFood.Business;
+﻿namespace AgiliFood.Business.Models.Employees;
 
 public class Employee
 {

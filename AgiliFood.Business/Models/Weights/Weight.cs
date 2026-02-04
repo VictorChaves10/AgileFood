@@ -2,33 +2,22 @@
 
 public class Weight
 {
-    public long Id { get; private set; }
+    public double Amount { get; }
 
-    public double Amount { get; private set; }
-
-    public WeightUnitEnum WeightUnit { get; private set; }
+    public WeightUnitEnum Unit { get; }
 
     protected Weight() { }
 
-    public Weight(double amount, WeightUnitEnum weightUnit)
-    {
-        SetAmount(amount);
-        SetWeightUnit(weightUnit);
-    }
-
-    public void SetAmount(double amount)
+    public Weight(double amount, WeightUnitEnum unit)
     {
         if (amount <= 0)
-            throw new ArgumentException("A quantidade deve ser maior que zero.", nameof(amount));
+            throw new ArgumentException("A quantidade deve ser maior que zero.");
+
+        if (!Enum.IsDefined(typeof(WeightUnitEnum), unit))
+            throw new ArgumentException("Unidade de peso inválida.");
 
         Amount = amount;
-    }
-
-    public void SetWeightUnit(WeightUnitEnum weightUnit)
-    {
-        if (!Enum.IsDefined(typeof(WeightUnitEnum), weightUnit))
-            throw new ArgumentException("Unidade de peso inválida.", nameof(weightUnit));
-
-        WeightUnit = weightUnit;
+        Unit = unit;
     }
 }
+
