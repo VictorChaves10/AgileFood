@@ -3,7 +3,7 @@ using AgiliFood.Application.Dtos;
 using AgiliFood.Application.Interfaces;
 using AgiliFood.Business.Interfaces;
 using AgiliFood.Business.Models;
-using AgiliFood.Business.Models.Product;
+using AgiliFood.Business.Models.Products;
 
 namespace AgiliFood.Application.Services;
 
@@ -102,7 +102,7 @@ public class ProductCategoryService : IProductCategoryService
         if (entity == null)
             return null;
 
-        entity.Update(dto.Name);
+        entity.UpdateName(dto.Name);
 
         _unitOfWork.ProductCategoryRepository.Update(entity);
         await _unitOfWork.CommitAsync();

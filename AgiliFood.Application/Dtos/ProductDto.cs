@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AgiliFood.Business.Models.Weights;
+using System.ComponentModel.DataAnnotations;
 
 namespace AgiliFood.Application.Dtos;
 
@@ -20,7 +21,7 @@ public class ProductDto
     public string Flavor { get; set; }
 
     [Required(ErrorMessage = "O peso é obrigatório.")]
-    public double Weight { get; set; }
+    public decimal WeightAmount { get; set; }
 
     [Required(ErrorMessage = "A unidade de peso é obrigatória.")]
     public WeightUnitEnum WeightUnit { get; set; }

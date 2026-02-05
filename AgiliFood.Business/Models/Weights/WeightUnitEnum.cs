@@ -2,6 +2,6 @@
 
 public enum WeightUnitEnum
 {
-    g = 0,    // Gramas
-    ml = 1,   // Mililitros
+    g = 1,    // Gramas
+    ml = 2,   // Mililitros
 }

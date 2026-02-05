@@ -2,13 +2,13 @@
 
 public class Weight
 {
-    public double Amount { get; }
+    public decimal Amount { get; }
 
     public WeightUnitEnum Unit { get; }
 
     protected Weight() { }
 
-    public Weight(double amount, WeightUnitEnum unit)
+    public Weight(decimal amount, WeightUnitEnum unit)
     {
         if (amount <= 0)
             throw new ArgumentException("A quantidade deve ser maior que zero.");

@@ -32,7 +32,7 @@ public class Product
 
     public Product(string name, string? description, string? brand, string flavor,
                    decimal price, bool isActive, string? barCode,  string? image,
-                   int productCategoryId, double weightAmount, WeightUnitEnum weightUnit)
+                   int productCategoryId, decimal weightAmount, WeightUnitEnum weightUnit)
     {
         ChangeName(name);
         ChangeFlavor(flavor);
@@ -61,7 +61,7 @@ public class Product
         Flavor = flavor;
     }
 
-    public void ChangeWeight(double amount, WeightUnitEnum unit)
+    public void ChangeWeight(decimal amount, WeightUnitEnum unit)
     {
         Weight = new Weight(amount, unit);
     }

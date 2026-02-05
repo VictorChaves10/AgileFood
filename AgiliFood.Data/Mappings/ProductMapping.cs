@@ -52,7 +52,8 @@ public class ProductMapping : IEntityTypeConfiguration<Product>
         {
             weight.Property(w => w.Amount)
                   .IsRequired()
-                  .HasColumnName("WeightAmount");
+                  .HasColumnName("WeightAmount")
+                  .HasColumnType("decimal(10,3)"); ;
 
             weight.Property(w => w.Unit)
                   .IsRequired()

@@ -1,8 +1,7 @@
 ﻿using AgiliFood.Application.Dtos;
 using AgiliFood.Application.Interfaces;
 using AgiliFood.Business.Interfaces;
-using AgiliFood.Business.Models;
-using AgiliFood.Business.Models.Product;
+using AgiliFood.Business.Models.Products;
 
 namespace AgiliFood.Application.Services;
 
@@ -23,12 +22,12 @@ public class ProductService : IProductService
             productDto.Description,
             productDto.Brand,
             productDto.Flavor,
-            productDto.Weight,
             productDto.Price,
             productDto.IsActive,
             productDto.BarCode,
             productDto.Image,
             productDto.ProductCategoryId,
+            productDto.WeightAmount,
             productDto.WeightUnit
         );
 
@@ -106,9 +105,9 @@ public class ProductService : IProductService
         if (product == null)
             return null;
 
-        product.SetName(productDto.Name);
-        product.SetFlavor(productDto.Flavor);
-        product.SetWeight(productDto.Weight, productDto.WeightUnit);
+        product.ChangeName(productDto.Name);
+        product.ChangeFlavor(productDto.Flavor);
+        product.ChangeWeight(productDto.WeightAmount, productDto.WeightUnit);
         product.ChangePrice(productDto.Price);
         product.ChangeCategory(productDto.ProductCategoryId);
         product.ChangeImage(productDto.Image);
