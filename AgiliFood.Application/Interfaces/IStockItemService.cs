@@ -1,4 +1,6 @@
-﻿namespace AgiliFood.Application.Interfaces;
+﻿using AgiliFood.Business.Models.Stock;
+
+namespace AgiliFood.Application.Interfaces;
 
 public interface IStockItemService
 {

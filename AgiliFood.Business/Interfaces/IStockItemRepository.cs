@@ -1,4 +1,6 @@
-﻿namespace AgiliFood.Business.Interfaces;
+﻿using AgiliFood.Business.Models.Stock;
+
+namespace AgiliFood.Business.Interfaces;
 
 public interface IStockItemRepository
 {   

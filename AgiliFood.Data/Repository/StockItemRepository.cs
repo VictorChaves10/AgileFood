@@ -1,4 +1,5 @@
 ﻿using AgiliFood.Business.Interfaces;
+using AgiliFood.Business.Models.Stock;
 using AgiliFood.Data.Context;
 using Microsoft.EntityFrameworkCore;
 
