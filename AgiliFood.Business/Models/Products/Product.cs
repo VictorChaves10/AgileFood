@@ -6,7 +6,7 @@ public class Product
 {
     public long Id { get; private set; }
 
-    public string? Name { get; private set; }
+    public string Name { get; private set; }
 
     public string? Description { get; private set; }
 
@@ -30,7 +30,7 @@ public class Product
 
     protected Product() { } 
 
-    public Product(string name, string? description, string? brand, string flavor,
+    public Product(string name, string? description, string? brand, string? flavor,
                    decimal price, bool isActive, string? barCode,  string? image,
                    int productCategoryId, decimal weightAmount, WeightUnitEnum weightUnit)
     {
@@ -56,7 +56,7 @@ public class Product
         Name = name;
     }
 
-    public void ChangeFlavor(string flavor)
+    public void ChangeFlavor(string? flavor)
     {
         Flavor = flavor;
     }
@@ -68,8 +68,8 @@ public class Product
 
     public void ChangePrice(decimal newPrice)
     {
-        if (newPrice < 0)
-            throw new ArgumentException("Preço não pode ser negativo.", nameof(newPrice));
+        if (newPrice <= 0)
+            throw new ArgumentException("O preço deve ser maior que zero.", nameof(newPrice));
 
         Price = newPrice;
     }

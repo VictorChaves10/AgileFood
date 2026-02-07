@@ -2,7 +2,7 @@
 using AgiliFood.Data.Context;
 using AgiliFood.Data.Repository;
 
-namespace ClinicSoftware.Infrastructure.Repositories;
+namespace AgiliFood.Data.UnitOfWork;
 
 public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
 {

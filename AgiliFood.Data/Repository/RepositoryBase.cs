@@ -14,25 +14,18 @@ public class RepositoryBase<T>(ApplicationDbContext context) : IRepositoryBase<T
                                       .ToListAsync();
     }
 
-    public async Task<T> GetAsync(Expression<Func<T, bool>> predicate)
+    public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate)
     {
         return await _context.Set<T>().FirstOrDefaultAsync(predicate);
     }
 
-    public T Create(T entity)
+    public void Create(T entity)
     {
         _context.Set<T>().Add(entity);
-        return entity;
-    }
-    public T Update(T entity)
-    {
-        _context.Entry(entity).State = EntityState.Modified;
-        return entity;
     }
 
-    public T Delete(T entity)
+    public void Delete(T entity)
     {
         _context.Set<T>().Remove(entity);
-        return entity;
     }
 }

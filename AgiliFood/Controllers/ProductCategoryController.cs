@@ -1,5 +1,5 @@
-﻿using AgiliFood.Application.Dtos;
-using AgiliFood.Application.Interfaces;
+﻿using AgiliFood.Application.Dtos.Products;
+using AgiliFood.Application.Interfaces.Products;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgiliFood.Api.Controllers;

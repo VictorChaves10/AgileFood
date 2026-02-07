@@ -10,15 +10,14 @@ public class ProductDto
 
     [Required(ErrorMessage = "O nome é obrigatório.")]
     [StringLength(100, ErrorMessage = "O nome deve ter no máximo 100 caracteres.")]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [StringLength(300, ErrorMessage = "A descrição deve ter no máximo 300 caracteres.")]
     public string? Description { get; set; }
 
     public string? Brand { get; set; }
 
-    [Required(ErrorMessage = "O sabor é obrigatório.")]
-    public string Flavor { get; set; }
+    public string? Flavor { get; set; }
 
     [Required(ErrorMessage = "O peso é obrigatório.")]
     public decimal WeightAmount { get; set; }

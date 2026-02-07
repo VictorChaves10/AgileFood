@@ -1,8 +1,6 @@
-﻿
+﻿using AgiliFood.Application.Dtos.Products;
 
-using AgiliFood.Application.Dtos;
-
-namespace AgiliFood.Application.Interfaces;
+namespace AgiliFood.Application.Interfaces.Products;
 
 public interface IProductCategoryService
 {

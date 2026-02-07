@@ -1,9 +1,9 @@
-using AgiliFood.Application.Interfaces;
-using AgiliFood.Application.Services;
+using AgiliFood.Application.Interfaces.Products;
+using AgiliFood.Application.Services.Products;
 using AgiliFood.Business.Interfaces;
 using AgiliFood.Data.Context;
 using AgiliFood.Data.Repository;
-using ClinicSoftware.Infrastructure.Repositories;
+using AgiliFood.Data.UnitOfWork;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
