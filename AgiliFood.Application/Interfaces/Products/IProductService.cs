@@ -8,6 +8,6 @@ public interface IProductService
     Task<IEnumerable<ProductResultDto>> GetAllAsync();
     Task<ProductResultDto?> GetByIdAsync(long id);
     Task<ProductResultDto> CreateAsync(CreateProductDto productDto);
-    Task<ProductResultDto?> UpdateAsync(ProductDto productDto);
+    Task<ProductResultDto?> UpdateAsync(UpdateProductDto productDto);
     Task<bool> DeleteAsync(long id);
 }

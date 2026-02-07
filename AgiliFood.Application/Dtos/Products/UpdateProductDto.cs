@@ -3,14 +3,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AgiliFood.Application.Dtos;
 
-public class ProductDto
+public class UpdateProductDto
 {
-    [Key]
     public long Id { get; set; }
 
     [Required(ErrorMessage = "O nome é obrigatório.")]
     [StringLength(100, ErrorMessage = "O nome deve ter no máximo 100 caracteres.")]
-    public string? Name { get; set; }
+    public string Name { get; set; }
 
     [StringLength(300, ErrorMessage = "A descrição deve ter no máximo 300 caracteres.")]
     public string? Description { get; set; }
@@ -37,8 +36,6 @@ public class ProductDto
 
     [Required(ErrorMessage = "A categoria do produto é obrigatória.")]
     public int ProductCategoryId { get; set; }
-
-    public string CategoryName { get; set; }
 
     public string? Image { get; set; }
 

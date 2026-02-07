@@ -87,7 +87,7 @@ public class ProductService : IProductService
         return product.MapToProductDto();
     }
 
-    public async Task<ProductResultDto?> UpdateAsync(ProductDto productDto)
+    public async Task<ProductResultDto?> UpdateAsync(UpdateProductDto productDto)
     {
         var product = await _unitOfWork.ProductRepository.GetAsync(x => x.Id == productDto.Id);
 
