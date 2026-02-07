@@ -1,6 +1,8 @@
 ﻿using AgiliFood.Business.Models.Products;
 using AgiliFood.Business.Models.Stock;
 
+namespace AgiliFood.Business.Models.Stock;
+
 public class StockItem
 {
     public long Id { get; private set; }

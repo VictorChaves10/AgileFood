@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
+namespace AgiliFood.Data.Mappings;
+
 public class StockItemMapping : IEntityTypeConfiguration<StockItem>
 {
     public void Configure(EntityTypeBuilder<StockItem> builder)

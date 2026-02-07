@@ -3,6 +3,7 @@ using AgiliFood.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
+namespace AgiliFood.Data.Repository; 
 
 public class RepositoryBase<T>(ApplicationDbContext context) : IRepositoryBase<T> where T : class
 {
