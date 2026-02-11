@@ -94,17 +94,18 @@ public class ProductService : IProductService
         if (product == null)
             return null;
 
-        product.ChangeName(productDto.Name);
-        product.ChangeFlavor(productDto.Flavor);
-        product.ChangeWeight(productDto.WeightAmount, productDto.WeightUnit);
-        product.ChangePrice(productDto.Price);
-        product.ChangeCategory(productDto.ProductCategoryId);
-        product.ChangeImage(productDto.Image);
-
-        if (productDto.IsActive)
-            product.Activate();
-        else
-            product.Deactivate();
+        product.Update(
+            productDto.Name,
+            productDto.Flavor,
+            productDto.Brand,
+            productDto.BarCode,
+            productDto.Price,
+            productDto.ProductCategoryId,
+            productDto.WeightAmount,
+            productDto.WeightUnit,
+            productDto.Image,
+            productDto.IsActive
+            );
 
         await _unitOfWork.CommitAsync();
 

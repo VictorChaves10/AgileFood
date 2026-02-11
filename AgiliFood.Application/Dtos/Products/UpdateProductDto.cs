@@ -30,7 +30,6 @@ public class UpdateProductDto
 
     public bool IsActive { get; set; }
 
-    [Required(ErrorMessage = "O código de barras é obrigatório.")]
     [StringLength(50, ErrorMessage = "O código de barras deve ter no máximo 50 caracteres.")]
     public string? BarCode { get; set; }
 
@@ -39,5 +38,5 @@ public class UpdateProductDto
 
     public string? Image { get; set; }
 
-    public string ImageUpload { get; set; }
+    public string? ImageUpload { get; set; }
 }

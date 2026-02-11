@@ -48,10 +48,10 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPut("{id:long}")]
-    public async Task<IActionResult> Update(long id, [FromBody] ProductDto productDto)
+    public async Task<IActionResult> Update(long id, [FromBody] UpdateProductDto productDto)
     {
         if (productDto == null || productDto.Id != id)
-            return BadRequest("Produto com id inválido");
+            return BadRequest("Produto inválido");
 
         var updatedProduct = await _service.UpdateAsync(productDto);
 
