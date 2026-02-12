@@ -20,7 +20,10 @@ namespace AgiliFood.Application.Mappings.Products
                   product.BarCode,
                   product.ProductCategoryId,
                   product.Image
-              );
+              )
+            {
+                CategoryName = product.ProductCategory?.Name,
+            };
         }
     }
 }

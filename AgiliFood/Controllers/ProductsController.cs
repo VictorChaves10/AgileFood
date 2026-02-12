@@ -53,12 +53,12 @@ public class ProductsController : ControllerBase
         if (productDto == null || productDto.Id != id)
             return BadRequest("Produto inválido");
 
-        var updatedProduct = await _service.UpdateAsync(productDto);
+        var updated = await _service.UpdateAsync(productDto);
 
-        if (updatedProduct == null)
+        if (!updated)
             return NotFound("Produto não localizado");
 
-        return Ok(updatedProduct);
+        return NoContent();
     }
 
     [HttpDelete("{id:long}")]

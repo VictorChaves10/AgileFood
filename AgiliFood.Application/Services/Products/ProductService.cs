@@ -79,7 +79,7 @@ public class ProductService : IProductService
 
     public async Task<ProductResultDto?> GetByIdAsync(long id)
     {
-        var product = await _unitOfWork.ProductRepository.GetAsync(x => x.Id == id);
+        var product = await _unitOfWork.ProductRepository.GetProductById(id);
 
         if (product == null)
             return null;
@@ -87,12 +87,12 @@ public class ProductService : IProductService
         return product.MapToProductDto();
     }
 
-    public async Task<ProductResultDto?> UpdateAsync(UpdateProductDto productDto)
+    public async Task<bool> UpdateAsync(UpdateProductDto productDto)
     {
         var product = await _unitOfWork.ProductRepository.GetAsync(x => x.Id == productDto.Id);
 
         if (product == null)
-            return null;
+            return false;
 
         product.Update(
             productDto.Name,
@@ -108,7 +108,6 @@ public class ProductService : IProductService
             );
 
         await _unitOfWork.CommitAsync();
-
-        return product.MapToProductDto();
+        return true;
     }
 }
