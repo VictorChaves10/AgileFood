@@ -12,7 +12,7 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
 
     }
 
-    public async Task<Product?> GetProductById(long id)
+    public async Task<Product?> GetByIdAsync(long id)
     {
         return await _context.Products.AsNoTracking()
                                 .Include(x => x.ProductCategory)
