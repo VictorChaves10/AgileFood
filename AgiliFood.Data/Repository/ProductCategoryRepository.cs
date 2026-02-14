@@ -7,18 +7,14 @@ namespace AgiliFood.Data.Repository;
 
 public class ProductCategoryRepository : RepositoryBase<ProductCategory>, IProductCategoryRepository
 {
-    private readonly ApplicationDbContext _context;
     public ProductCategoryRepository(ApplicationDbContext context) : base(context)
     {
-        _context = context;
     }
 
-    public async Task<ProductCategory> GetAllWithProductsAsync(int id)
+    public async Task<ProductCategory?> GetByIdAsync(int id)
     {
-        var entity = await _context.ProductCategories.AsNoTracking()
-                                                    .Include(pc => pc.Products)
-                                                    .FirstOrDefaultAsync(pc => pc.Id == id);
-
-        return entity;
+       return await _context.ProductCategories.AsNoTracking()
+                                              .Include(pc => pc.Products)
+                                              .FirstOrDefaultAsync(pc => pc.Id == id);
     }
 }

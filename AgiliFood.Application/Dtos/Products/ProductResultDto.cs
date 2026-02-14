@@ -14,9 +14,7 @@ namespace AgiliFood.Application.Dtos.Products
         bool IsActive,
         string? BarCode,
         int ProductCategoryId,
-        string? Image
-    )
-    {
-        public string? CategoryName { get; set; }
-    };
+        string? Image,
+        string? CategoryName
+    );
 }

@@ -4,7 +4,7 @@ public class ProductCategory
 {
     public int Id { get; private set; }
 
-    public string? Name { get; private set; }
+    public string Name { get; private set; }
 
     public ICollection<Product>? Products { get; private set; }
 
@@ -12,11 +12,14 @@ public class ProductCategory
 
     public ProductCategory(string name)
     {
-        Name = name;
+        ChangeName(name);
     }
 
-    public void UpdateName(string name)
+    public void ChangeName(string name)
     {
+        if(string.IsNullOrEmpty(name))
+            throw new ArgumentException("O nome da categoria é obrigatório.", nameof(name));
+
         Name = name;
     }
 }

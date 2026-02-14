@@ -4,6 +4,8 @@ namespace AgiliFood.Business.Interfaces
 {
     public interface IProductCategoryRepository : IRepositoryBase<ProductCategory>
     {
-        Task<ProductCategory> GetAllWithProductsAsync(int id);
+        Task<ProductCategory?> GetByIdAsync(int id);
+
+
     }
 }

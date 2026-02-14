@@ -36,7 +36,6 @@ public class ProductService : IProductService
         await _unitOfWork.CommitAsync();
 
         return product.MapToProductDto();
-
     }
 
     public async Task<bool> DeleteAsync(long id)
@@ -59,27 +58,12 @@ public class ProductService : IProductService
         if (products == null || !products.Any())
             return Enumerable.Empty<ProductResultDto>();
 
-        return products.Select(p => new ProductResultDto
-        (
-              p.Id,
-              p.Name,
-              p.Description,
-              p.Brand,
-              p.Flavor,
-              p.Weight.Amount,
-              p.Weight.Unit,
-              p.Price,
-              p.IsActive,
-              p.BarCode,
-              p.ProductCategoryId,
-              p.Image
-
-        )).ToList();
+        return products.Select(p => p.MapToProductDto());   
     }
 
     public async Task<ProductResultDto?> GetByIdAsync(long id)
     {
-        var product = await _unitOfWork.ProductRepository.GetProductById(id);
+        var product = await _unitOfWork.ProductRepository.GetByIdAsync(id);
 
         if (product == null)
             return null;

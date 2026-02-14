@@ -1,5 +1,5 @@
-﻿using AgiliFood.Application.Dtos.Products;
-using AgiliFood.Application.Interfaces.Products;
+﻿using AgiliFood.Application.Dtos.ProductCategories;
+using AgiliFood.Application.Interfaces.ProductCategories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgiliFood.Api.Controllers;
@@ -19,12 +19,6 @@ public class ProductCategoryController : ControllerBase
     public async Task<IActionResult> GetAll()
     {
         var categories = await _service.GetAllAsync();
-
-        if (categories == null || !categories.Any())
-        {
-            return NotFound("No product categories found.");
-        }
-
         return Ok(categories);
     }
 
@@ -32,45 +26,46 @@ public class ProductCategoryController : ControllerBase
     public async Task<IActionResult> GetById(int id)
     {
         var category = await _service.GetByIdAsync(id);
+
         if (category == null)
-        {
-            return NotFound($"Product category with ID {id} not found.");
-        }
+            return NotFound("Categoria não localizada.");
+
         return Ok(category);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] ProductCategoryDto categoryDto)
+    public async Task<IActionResult> Create([FromBody] CreateProductCategoryDto categoryDto)
     {
         if (categoryDto == null)
-        {
-            return BadRequest("Product category data is required.");
-        }
+            return BadRequest("A categoria é obrigatória.");
 
         var createdCategory = await _service.CreateAsync(categoryDto);
         return CreatedAtAction(nameof(GetById), new { id = createdCategory.Id }, createdCategory);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update(int id, [FromBody] ProductCategoryDto categoryDto)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateProductCategoryDto categoryDto)
     {
         if (categoryDto == null || categoryDto.Id != id)
-        {
-            return BadRequest("Product category data is invalid.");
-        }
-        var updatedCategory = await _service.UpdateAsync(categoryDto);
-        if (updatedCategory == null)
-        {
-            return NotFound($"Product category with ID {id} not found.");
-        }
-        return Ok(updatedCategory);
+            return BadRequest("Categoria inválida.");
+
+        var updated = await _service.UpdateAsync(categoryDto);
+
+        if (!updated)
+            return NotFound("Categoria não localizada.");
+        
+        return NoContent();
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
         var deleted = await _service.DeleteAsync(id);
-        return deleted ? NoContent() : NotFound();
+
+        if (!deleted)
+            return NotFound("Categoria não localizada.");
+
+        return NoContent();
     }
 
 }
