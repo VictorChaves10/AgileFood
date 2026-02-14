@@ -14,16 +14,8 @@ public class StockItemRepository : IStockItemRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<StockItem>> GetAllAsync()
+    public void CreateStockItem(StockItem item)
     {
-        var stockItems = await _context.StockItems.AsNoTracking()
-                                                  .ToListAsync();
-
-        return stockItems;
-    }
-
-    public Task<StockItem> GetByIdAsync(long id)
-    {
-        throw new NotImplementedException();
+        _context.StockItems.Add(item);
     }
 }

@@ -1,7 +1,9 @@
 using AgiliFood.Application.Interfaces.ProductCategories;
 using AgiliFood.Application.Interfaces.Products;
+using AgiliFood.Application.Interfaces.Stock;
 using AgiliFood.Application.Services.ProductCategories;
 using AgiliFood.Application.Services.Products;
+using AgiliFood.Application.Services.Stock;
 using AgiliFood.Business.Interfaces;
 using AgiliFood.Data.Context;
 using AgiliFood.Data.Repository;
@@ -24,11 +26,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IStockItemService, StockItemService>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductCategoryRepository, ProductCategoryRepository>();
+builder.Services.AddScoped<IStockItemRepository, StockItemRepository>();
 
 var app = builder.Build();
 
