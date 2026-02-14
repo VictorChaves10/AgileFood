@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AgiliFood.Api.Controllers;
 
-[Route("api/product-category")]
+[Route("api/categorias")]
 [ApiController]
 public class ProductCategoryController : ControllerBase
 {

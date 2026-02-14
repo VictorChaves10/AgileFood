@@ -15,11 +15,6 @@ public class ProductCategoryMapping : IEntityTypeConfiguration<ProductCategory>
         builder.Property(pc => pc.Name)
             .IsRequired()
             .HasMaxLength(100);
-
-        builder.HasMany(pc => pc.Products)
-            .WithOne(p => p.ProductCategory)
-            .HasForeignKey(p => p.ProductCategoryId)
-            .OnDelete(DeleteBehavior.Restrict);
     }
 }
 

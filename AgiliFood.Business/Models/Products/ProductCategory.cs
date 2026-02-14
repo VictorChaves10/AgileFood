@@ -6,7 +6,7 @@ public class ProductCategory
 
     public string Name { get; private set; }
 
-    public ICollection<Product>? Products { get; private set; }
+    public ICollection<Product>? Products { get; private set; } = new List<Product>();
 
     protected ProductCategory() { }
 

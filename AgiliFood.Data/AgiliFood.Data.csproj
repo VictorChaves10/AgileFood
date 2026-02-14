@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AgiliFood.Application\AgiliFood.Application.csproj" />
     <ProjectReference Include="..\AgiliFood.Business\AgiliFood.Business.csproj" />
   </ItemGroup>
 
