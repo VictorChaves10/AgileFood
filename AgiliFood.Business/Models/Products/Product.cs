@@ -37,13 +37,13 @@ public class Product
         ChangeName(name);
         ChangeWeight(weightAmount, weightUnit);
         ChangePrice(price);
+        ChangeCategory(productCategoryId);
 
         Description = description;
         Brand = brand;
         IsActive = isActive;
         BarCode = barCode;
         Image = image;
-        ProductCategoryId = productCategoryId;
         Flavor = flavor;
     }
 
@@ -57,7 +57,8 @@ public class Product
         decimal weightAmount,
         WeightUnitEnum weightUnit,
         string? image,
-        bool isActive)
+        bool isActive,
+        string? description)
     {
         if (Name != name) ChangeName(name);
         if (Price != price) ChangePrice(price);
@@ -69,6 +70,8 @@ public class Product
 
         if (Weight.Amount != weightAmount || Weight.Unit != weightUnit)
             ChangeWeight(weightAmount, weightUnit);
+
+        if (Description != description) ChangeDescription(description);
 
         if (isActive)
             Activate();
@@ -84,6 +87,11 @@ public class Product
             throw new ArgumentException("O nome do produto é obrigatório.", nameof(name));
 
         Name = name;
+    }
+
+    public void ChangeDescription(string? description)
+    {
+        Description = description;
     }
 
     public void ChangeWeight(decimal amount, WeightUnitEnum unit)

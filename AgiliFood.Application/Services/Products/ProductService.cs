@@ -88,7 +88,8 @@ public class ProductService : IProductService
             productDto.WeightAmount,
             productDto.WeightUnit,
             productDto.Image,
-            productDto.IsActive
+            productDto.IsActive,
+            productDto.Description
             );
 
         await _unitOfWork.CommitAsync();

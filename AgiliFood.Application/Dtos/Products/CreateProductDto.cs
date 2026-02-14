@@ -1,43 +1,41 @@
 ﻿using AgiliFood.Business.Models.Weights;
 using System.ComponentModel.DataAnnotations;
 
-namespace AgiliFood.Application.Dtos.Products
-{
-    public record CreateProductDto(
+namespace AgiliFood.Application.Dtos.Products;
 
-        [Required(ErrorMessage = "O nome é obrigatório.")]
-        [StringLength(100, ErrorMessage = "O nome deve ter no máximo 100 caracteres.")]
-        string Name,
+public record CreateProductDto(
 
-        [StringLength(300, ErrorMessage = "A descrição deve ter no máximo 300 caracteres.")]
-        string? Description,
+    [Required(ErrorMessage = "O nome é obrigatório.")]
+    [StringLength(100, ErrorMessage = "O nome deve ter no máximo 100 caracteres.")]
+    string Name,
 
-        string? Brand,
+    [StringLength(300, ErrorMessage = "A descrição deve ter no máximo 300 caracteres.")]
+    string? Description,
 
-        string? Flavor,
+    string? Brand,
 
-        bool IsActive,
+    string? Flavor,
 
-        [Required(ErrorMessage = "O peso é obrigatório.")]
-        decimal WeightAmount,
+    bool IsActive,
 
-        [Required(ErrorMessage = "A unidade de peso é obrigatória.")]
-        WeightUnitEnum WeightUnit,
+    [Required(ErrorMessage = "O peso é obrigatório.")]
+    decimal WeightAmount,
 
-        [Required(ErrorMessage = "O preço é obrigatório.")]
-        [Range(0.01, double.MaxValue, ErrorMessage = "O preço deve ser maior que zero.")]
-        decimal Price,
+    [Required(ErrorMessage = "A unidade de peso é obrigatória.")]
+    WeightUnitEnum WeightUnit,
 
-        [Required(ErrorMessage = "O código de barras é obrigatório.")]
-        [StringLength(50, ErrorMessage = "O código de barras deve ter no máximo 50 caracteres.")]
-        string BarCode,
+    [Required(ErrorMessage = "O preço é obrigatório.")]
+    [Range(0.01, double.MaxValue, ErrorMessage = "O preço deve ser maior que zero.")]
+    decimal Price,
 
-        [Required(ErrorMessage = "A categoria do produto é obrigatória.")]
-        int ProductCategoryId,
+    [Required(ErrorMessage = "O código de barras é obrigatório.")]
+    [StringLength(50, ErrorMessage = "O código de barras deve ter no máximo 50 caracteres.")]
+    string BarCode,
 
-        string? Image,
+    [Required(ErrorMessage = "A categoria do produto é obrigatória.")]
+    int ProductCategoryId,
 
-        string? ImageUpload
-    );
+    string? Image,
 
-}
+    string? ImageUpload
+);

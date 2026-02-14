@@ -16,7 +16,7 @@ public class ProductRepository : RepositoryBase<Product>, IProductRepository
     {
         return await _context.Products.AsNoTracking()
                                 .Include(x => x.ProductCategory)
-                                .FirstOrDefaultAsync();
+                                .FirstOrDefaultAsync(x => x.Id == id);
     }
 }
 

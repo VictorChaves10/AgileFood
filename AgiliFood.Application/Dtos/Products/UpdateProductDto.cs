@@ -1,7 +1,7 @@
 ﻿using AgiliFood.Business.Models.Weights;
 using System.ComponentModel.DataAnnotations;
 
-namespace AgiliFood.Application.Dtos;
+namespace AgiliFood.Application.Dtos.Products;
 
 public record UpdateProductDto(
     [Required(ErrorMessage = "O ID é obrigatório.")]
