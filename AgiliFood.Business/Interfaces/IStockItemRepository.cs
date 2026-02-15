@@ -6,4 +6,6 @@ public interface IStockItemRepository
 {   
     void CreateStockItem(StockItem item);
 
+    Task<StockItem?> GetByIdAsync(long id);
+
 }

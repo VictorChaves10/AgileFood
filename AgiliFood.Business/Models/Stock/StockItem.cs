@@ -23,10 +23,9 @@ public class StockItem
 
     protected StockItem() { }
 
-    public StockItem(string stockCode, long productId, int initialQuantity, DateTime? expirationDate = null)
+    public StockItem(long productId, int initialQuantity, DateTime? expirationDate = null)
     {
         ProductId = productId;
-        Quantity = initialQuantity;
         CreatedAt = DateTime.UtcNow;
         SetExpirationDate(expirationDate);
         RegisterEntry(initialQuantity, "Estoque inicial");

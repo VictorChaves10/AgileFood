@@ -18,4 +18,11 @@ public class StockItemRepository : IStockItemRepository
     {
         _context.StockItems.Add(item);
     }
+
+    public async Task<StockItem?> GetByIdAsync(long id)
+    {
+        return await _context.StockItems.AsNoTracking()
+                                        .Include(x => x.Movements)
+                                        .FirstOrDefaultAsync(x => x.Id == id);
+    }
 }
