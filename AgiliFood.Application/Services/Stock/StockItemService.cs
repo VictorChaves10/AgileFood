@@ -15,7 +15,7 @@ public class StockItemService : IStockItemService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<StockItemResultDto> CreateStockItem(CreateStockItemDto stockItemDto)
+    public async Task<StockItemResultDto> CreateAsync(CreateStockItemDto stockItemDto)
     {
         var stockItem = new StockItem
         (
@@ -24,13 +24,13 @@ public class StockItemService : IStockItemService
             stockItemDto.ExpirationDate
         );
 
-        _unitOfWork.StockItemRepository.CreateStockItem(stockItem);
+        _unitOfWork.StockItemRepository.Create(stockItem);
         await _unitOfWork.CommitAsync();
 
         return stockItem.MapToStockItemDto();
     }
 
-    public async Task<StockItemResultDto?> GetById(long id)
+    public async Task<StockItemResultDto?> GetByIdAsync(long id)
     {
         var stock = await _unitOfWork.StockItemRepository.GetByIdAsync(id);
 
@@ -38,4 +38,18 @@ public class StockItemService : IStockItemService
 
         return stock.MapToStockItemDto();
     }
+
+    public async Task<bool> AddStockEntryAsync(long stockItemId, RegisterStockEntryDto entryDto)
+    {
+        var stockItem = await _unitOfWork.StockItemRepository.GetAsync(x => x.Id == stockItemId);
+
+        if (stockItem == null)
+            return false;
+
+        stockItem.RegisterEntry(entryDto.Quantity, entryDto.Reason);
+        await _unitOfWork.CommitAsync();
+
+        return true;
+    }
+
 }

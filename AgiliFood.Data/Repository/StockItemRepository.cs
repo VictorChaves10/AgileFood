@@ -2,6 +2,7 @@
 using AgiliFood.Business.Models.Stock;
 using AgiliFood.Data.Context;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace AgiliFood.Data.Repository;
 
@@ -14,9 +15,14 @@ public class StockItemRepository : IStockItemRepository
         _context = context;
     }
 
-    public void CreateStockItem(StockItem item)
+    public void Create(StockItem item)
     {
         _context.StockItems.Add(item);
+    }
+
+    public async Task<StockItem?> GetAsync(Expression<Func<StockItem, bool>> predicate)
+    {
+        return await _context.StockItems.FirstOrDefaultAsync(predicate);
     }
 
     public async Task<StockItem?> GetByIdAsync(long id)
