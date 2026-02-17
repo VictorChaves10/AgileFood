@@ -1,0 +1,74 @@
+﻿using AgileFood.Application.Dtos;
+using AgileFood.Application.Dtos.Products;
+using AgileFood.Application.Interfaces.Products;
+using Microsoft.AspNetCore.Mvc;
+
+namespace AgileFood.Api.Controllers;
+
+[Route("api/produtos")]
+[ApiController]
+public class ProductsController : ControllerBase
+{
+
+    private readonly IProductService _service;
+    public ProductsController(IProductService service)
+    {
+        _service = service;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var products = await _service.GetAllAsync();
+        return Ok(products);
+    }
+
+    [HttpGet("{id:long}")]
+    public async Task<IActionResult> GetById(long id)
+    {
+        var product = await _service.GetByIdAsync(id);
+
+        if (product == null)
+            return NotFound("Produto não localizado");
+
+        return Ok(product);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] CreateProductDto productDto)
+    {
+        if (productDto == null)
+            return BadRequest("O produto é obrigatório.");
+
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var createdProduct = await _service.CreateAsync(productDto);
+        return CreatedAtAction(nameof(GetById), new { id = createdProduct.Id }, createdProduct);
+    }
+
+    [HttpPut("{id:long}")]
+    public async Task<IActionResult> Update(long id, [FromBody] UpdateProductDto productDto)
+    {
+        if (productDto == null || productDto.Id != id)
+            return BadRequest("Produto inválido");
+
+        var updated = await _service.UpdateAsync(productDto);
+
+        if (!updated)
+            return NotFound("Produto não localizado");
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id:long}")]
+    public async Task<IActionResult> Delete(long id)
+    {
+        var deleted = await _service.DeleteAsync(id);
+
+        if (!deleted)
+            return NotFound("Produto não localizado");
+
+        return NoContent();
+    }
+}
