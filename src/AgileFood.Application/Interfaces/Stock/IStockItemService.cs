@@ -5,10 +5,10 @@ namespace AgileFood.Application.Interfaces.Stock;
 
 public interface IStockItemService
 {
-    Task<StockItemResultDto> CreateAsync(CreateStockItemDto stockItemDto);
-
+    Task<IEnumerable<StockItemResultDto?>> GetAllAsync();
     Task<StockItemResultDto?> GetByIdAsync(long id);
-
-    Task<bool> AddStockEntryAsync(long stockItemId, RegisterStockEntryDto entryDto);
+    Task<StockItemResultDto> CreateAsync(CreateStockItemDto stockItemDto);
+    Task<bool> RegisterStockEntryAsync(long stockItemId, RegisterStockEntryDto entryDto);
+    Task<bool> RegisterStockExitAsync(long stockItemId, RegisterStockExitDto entryDto);
 
 }

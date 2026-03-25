@@ -20,6 +20,12 @@ public class StockItemRepository : IStockItemRepository
         _context.StockItems.Add(item);
     }
 
+    public async Task<IEnumerable<StockItem?>> GetAllAsync()
+    {
+        return await _context.StockItems.AsNoTracking()
+                                        .ToListAsync();
+    }
+
     public async Task<StockItem?> GetAsync(Expression<Func<StockItem, bool>> predicate)
     {
         return await _context.StockItems.FirstOrDefaultAsync(predicate);

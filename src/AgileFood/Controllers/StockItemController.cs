@@ -28,22 +28,43 @@ public class StockItemController : Controller
     [HttpGet("{id:long}")]
     public async Task<IActionResult> GetById(long id)
     {
-        var stock = await _stockItemService.GetByIdAsync(id);
+        var stockItem = await _stockItemService.GetByIdAsync(id);
 
-        if (stock is null)
+        if (stockItem is null)
             return NotFound("Estoque não localizado.");
 
-        return Ok(stock);
+        return Ok(stockItem);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll()
+    {
+        var stockItens = await _stockItemService.GetAllAsync();
+        return Ok(stockItens);
     }
 
     [HttpPost("{id:long}/entrada")]
-    public async Task<IActionResult> AddStockEntry(long id, [FromBody] RegisterStockEntryDto entryDto)
+    public async Task<IActionResult> RegisterStockEntry(long id, [FromBody] RegisterStockEntryDto entryDto)
     {
         if (entryDto == null)
             return BadRequest();
 
-        var added = await _stockItemService.AddStockEntryAsync(id, entryDto);
+        var added = await _stockItemService.RegisterStockEntryAsync(id, entryDto);
         
+        if (!added)
+            return NotFound("Estoque não localizado");
+
+        return NoContent();
+    }
+
+    [HttpPost("{id:long}/saida")]
+    public async Task<IActionResult> RegisterStockExit(long id, [FromBody] RegisterStockExitDto exitDto)
+    {
+        if (exitDto == null)
+            return BadRequest();
+
+        var added = await _stockItemService.RegisterStockExitAsync(id, exitDto);
+
         if (!added)
             return NotFound("Estoque não localizado");
 

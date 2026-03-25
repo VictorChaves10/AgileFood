@@ -2,5 +2,5 @@
 
 public record RegisterStockExitDto(
     int Quantity,
-    string? Reason
+    string Reason
 );
