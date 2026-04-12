@@ -1,12 +1,12 @@
 ﻿using System.Linq.Expressions;
 
-namespace AgileFood.Business.Interfaces
+namespace AgileFood.Business.Interfaces;
+
+public interface IRepositoryBase<T>
 {
-    public interface IRepositoryBase<T>
-    {
-        Task<IEnumerable<T>> GetAllAsync();
-        Task<T?> GetAsync(Expression<Func<T, bool>> predicate);
-        void Create(T entity);
-        void Delete(T entity);
-    }
+    Task<IEnumerable<T>> GetAllAsync();
+    Task<T?> FindAsync(Expression<Func<T, bool>> predicate);
+    void Add(T entity);
+    void Update(T entity);
+    void Remove(T entity);
 }

@@ -32,7 +32,7 @@ public class ProductService : IProductService
             productDto.WeightUnit
         );
 
-        _unitOfWork.ProductRepository.Create(product);
+        _unitOfWork.ProductRepository.Add(product);
         await _unitOfWork.CommitAsync();
 
         return product.MapToProductDto();
@@ -40,12 +40,12 @@ public class ProductService : IProductService
 
     public async Task<bool> DeleteAsync(long id)
     {
-        var entity = await _unitOfWork.ProductRepository.GetAsync(x => x.Id == id);
+        var entity = await _unitOfWork.ProductRepository.FindAsync(x => x.Id == id);
 
         if (entity is null)
             return false;
 
-        _unitOfWork.ProductRepository.Delete(entity);
+        _unitOfWork.ProductRepository.Remove(entity);
         await _unitOfWork.CommitAsync();
 
         return true;
@@ -58,7 +58,7 @@ public class ProductService : IProductService
         if (products == null || !products.Any())
             return Enumerable.Empty<ProductResultDto>();
 
-        return products.Select(p => p.MapToProductDto());   
+        return products.Select(p => p.MapToProductDto());
     }
 
     public async Task<ProductResultDto?> GetByIdAsync(long id)
@@ -73,7 +73,7 @@ public class ProductService : IProductService
 
     public async Task<bool> UpdateAsync(UpdateProductDto productDto)
     {
-        var product = await _unitOfWork.ProductRepository.GetAsync(x => x.Id == productDto.Id);
+        var product = await _unitOfWork.ProductRepository.FindAsync(x => x.Id == productDto.Id);
 
         if (product == null)
             return false;
@@ -90,7 +90,7 @@ public class ProductService : IProductService
             productDto.Image,
             productDto.IsActive,
             productDto.Description
-            );
+        );
 
         await _unitOfWork.CommitAsync();
         return true;

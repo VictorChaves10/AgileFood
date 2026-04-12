@@ -44,12 +44,12 @@ public class StockItemController : Controller
     }
 
     [HttpPost("{id:long}/entrada")]
-    public async Task<IActionResult> RegisterStockEntry(long id, [FromBody] RegisterStockEntryDto entryDto)
+    public async Task<IActionResult> RegisterStockEntry(long id, [FromBody] RegisterStockMovementDto entryDto)
     {
         if (entryDto == null)
             return BadRequest();
 
-        var added = await _stockItemService.RegisterStockEntryAsync(id, entryDto);
+        var added = await _stockItemService.RegisterEntryAsync(id, entryDto);
         
         if (!added)
             return NotFound("Estoque não localizado");
@@ -58,12 +58,12 @@ public class StockItemController : Controller
     }
 
     [HttpPost("{id:long}/saida")]
-    public async Task<IActionResult> RegisterStockExit(long id, [FromBody] RegisterStockExitDto exitDto)
+    public async Task<IActionResult> RegisterStockExit(long id, [FromBody] RegisterStockMovementDto exitDto)
     {
         if (exitDto == null)
             return BadRequest();
 
-        var added = await _stockItemService.RegisterStockExitAsync(id, exitDto);
+        var added = await _stockItemService.RegisterExitAsync(id, exitDto);
 
         if (!added)
             return NotFound("Estoque não localizado");

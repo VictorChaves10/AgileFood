@@ -3,7 +3,7 @@ using AgileFood.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace AgileFood.Data.Repository; 
+namespace AgileFood.Data.Repository;
 
 public class RepositoryBase<T>(ApplicationDbContext context) : IRepositoryBase<T> where T : class
 {
@@ -11,21 +11,25 @@ public class RepositoryBase<T>(ApplicationDbContext context) : IRepositoryBase<T
 
     public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await _context.Set<T>().AsNoTracking()
-                                      .ToListAsync();
+        return await _context.Set<T>().AsNoTracking().ToListAsync();
     }
 
-    public async Task<T?> GetAsync(Expression<Func<T, bool>> predicate)
+    public async Task<T?> FindAsync(Expression<Func<T, bool>> predicate)
     {
         return await _context.Set<T>().FirstOrDefaultAsync(predicate);
     }
 
-    public void Create(T entity)
+    public void Add(T entity)
     {
         _context.Set<T>().Add(entity);
     }
 
-    public void Delete(T entity)
+    public void Update(T entity)
+    {
+        _context.Set<T>().Update(entity);
+    }
+
+    public void Remove(T entity)
     {
         _context.Set<T>().Remove(entity);
     }

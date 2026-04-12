@@ -1,7 +1,6 @@
 ﻿using AgileFood.Application.Dtos.ProductCategories;
 using AgileFood.Application.Interfaces.ProductCategories;
 using AgileFood.Application.Mappings.ProductCategories;
-using AgileFood.Application.Mappings.Products;
 using AgileFood.Business.Interfaces;
 using AgileFood.Business.Models.Products;
 
@@ -19,7 +18,7 @@ public class ProductCategoryService : IProductCategoryService
     public async Task<ProductCategoryResultDto> CreateAsync(CreateProductCategoryDto categoryDto)
     {
         var category = new ProductCategory(categoryDto.Name);
-        _unitOfWork.ProductCategoryRepository.Create(category);
+        _unitOfWork.ProductCategoryRepository.Add(category);
 
         await _unitOfWork.CommitAsync();
 
@@ -37,19 +36,19 @@ public class ProductCategoryService : IProductCategoryService
 
     public async Task<bool> DeleteAsync(int id)
     {
-        var category = await _unitOfWork.ProductCategoryRepository.GetAsync(x => x.Id == id);
+        var category = await _unitOfWork.ProductCategoryRepository.FindAsync(x => x.Id == id);
 
         if (category == null)
             return false;
 
-        _unitOfWork.ProductCategoryRepository.Delete(category);
+        _unitOfWork.ProductCategoryRepository.Remove(category);
         await _unitOfWork.CommitAsync();
         return true;
     }
 
     public async Task<bool> UpdateAsync(UpdateProductCategoryDto categoryDto)
     {
-        var category = await _unitOfWork.ProductCategoryRepository.GetAsync(x => x.Id == categoryDto.Id);
+        var category = await _unitOfWork.ProductCategoryRepository.FindAsync(x => x.Id == categoryDto.Id);
 
         if (category == null) return false;
 
@@ -62,7 +61,7 @@ public class ProductCategoryService : IProductCategoryService
     {
         var categories = await _unitOfWork.ProductCategoryRepository.GetAllAsync();
 
-        if (categories == null || !categories.Any()) 
+        if (categories == null || !categories.Any())
             return Enumerable.Empty<ProductCategoryResultDto>();
 
         return categories.Select(x => x.MapToProductCategoryDto());

@@ -17,63 +17,60 @@ public class StockItemService : IStockItemService
 
     public async Task<StockItemResultDto> CreateAsync(CreateStockItemDto stockItemDto)
     {
-        var stockItem = new StockItem
-        (
+        var stockItem = new StockItem(
             stockItemDto.ProductId,
             stockItemDto.InitialQuantity,
             stockItemDto.ExpirationDate
         );
 
-        _unitOfWork.StockItemRepository.Create(stockItem);
+        _unitOfWork.StockItemRepository.Add(stockItem);
         await _unitOfWork.CommitAsync();
 
         return stockItem.MapToStockItemDto();
     }
 
-    public async Task<IEnumerable<StockItemResultDto?>> GetAllAsync()
+    public async Task<IEnumerable<StockItemResultDto>> GetAllAsync()
     {
-        var stockItens = await _unitOfWork.StockItemRepository.GetAllAsync();
+        var stockItems = await _unitOfWork.StockItemRepository.GetAllAsync();
 
-        if (stockItens == null || !stockItens.Any())
-            return Enumerable.Empty<StockItemResultDto?>();
+        if (stockItems == null || !stockItems.Any())
+            return Enumerable.Empty<StockItemResultDto>();
 
-        return stockItens.Select(x => x?.MapToStockItemDto());
+        return stockItems.Select(x => x.MapToStockItemDto());
     }
 
     public async Task<StockItemResultDto?> GetByIdAsync(long id)
     {
-        var stock = await _unitOfWork.StockItemRepository.GetByIdAsync(id);
+        var stockItem = await _unitOfWork.StockItemRepository.GetByIdAsync(id);
 
-        if (stock == null) return null;
+        if (stockItem == null) return null;
 
-        return stock.MapToStockItemDto();
+        return stockItem.MapToStockItemDto();
     }
 
-    public async Task<bool> RegisterStockEntryAsync(long stockItemId, RegisterStockEntryDto entryDto)
+    public async Task<bool> RegisterEntryAsync(long stockItemId, RegisterStockMovementDto dto)
     {
-        var stockItem = await _unitOfWork.StockItemRepository.GetAsync(x => x.Id == stockItemId);
+        var stockItem = await _unitOfWork.StockItemRepository.FindAsync(x => x.Id == stockItemId);
 
         if (stockItem == null)
             return false;
 
-        stockItem.RegisterEntry(entryDto.Quantity, entryDto.Reason);
+        stockItem.RegisterEntry(dto.Quantity, dto.Reason);
         await _unitOfWork.CommitAsync();
 
         return true;
     }
 
-
-    public async Task<bool> RegisterStockExitAsync(long stockItemId, RegisterStockExitDto exitDto)
+    public async Task<bool> RegisterExitAsync(long stockItemId, RegisterStockMovementDto dto)
     {
-        var stockItem = await _unitOfWork.StockItemRepository.GetAsync(x => x.Id == stockItemId);
+        var stockItem = await _unitOfWork.StockItemRepository.FindAsync(x => x.Id == stockItemId);
 
         if (stockItem == null)
             return false;
 
-        stockItem.RegisterExit(exitDto.Quantity, exitDto.Reason);
+        stockItem.RegisterExit(dto.Quantity, dto.Reason);
         await _unitOfWork.CommitAsync();
 
         return true;
     }
-
 }
