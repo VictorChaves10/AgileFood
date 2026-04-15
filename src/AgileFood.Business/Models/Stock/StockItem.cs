@@ -1,5 +1,4 @@
 ﻿using AgileFood.Business.Models.Products;
-using AgileFood.Business.Models.Stock;
 
 namespace AgileFood.Business.Models.Stock;
 
@@ -28,19 +27,19 @@ public class StockItem
         ProductId = productId;
         CreatedAt = DateTime.UtcNow;
         SetExpirationDate(expirationDate);
-        RegisterEntry(initialQuantity, "Estoque inicial");
+        RegisterEntry(initialQuantity, StockMovementOrigin.InitialStock, "Estoque inicial");
     }
 
-    public void RegisterEntry(int quantity, string reason = "Entrada")
+    public void RegisterEntry(int quantity, StockMovementOrigin origin = StockMovementOrigin.Manual, string reason = "Entrada")
     {
         if (quantity <= 0)
             throw new ArgumentException("A quantidade adicionada deve ser maior que zero.", nameof(quantity));
 
         Quantity += quantity;
-        _movements.Add(new StockMovement(StockMovementType.Entry, quantity, reason));
+        _movements.Add(new StockMovement(StockMovementType.Entry, origin, quantity, reason));
     }
 
-    public void RegisterExit(int quantity, string reason = "Saída")
+    public void RegisterExit(int quantity, StockMovementOrigin origin = StockMovementOrigin.Manual, string reason = "Saída", long? consumptionId = null)
     {
         if (quantity <= 0)
             throw new ArgumentException("A quantidade removida deve ser maior que zero.", nameof(quantity));
@@ -49,7 +48,7 @@ public class StockItem
             throw new InvalidOperationException("Quantidade em estoque insuficiente.");
 
         Quantity -= quantity;
-        _movements.Add(new StockMovement(StockMovementType.Exit, quantity, reason));
+        _movements.Add(new StockMovement(StockMovementType.Exit, origin, quantity, reason, consumptionId));
     }
 
     private void SetExpirationDate(DateTime? expirationDate)
@@ -59,5 +58,4 @@ public class StockItem
 
         ExpirationDate = expirationDate;
     }
-
 }

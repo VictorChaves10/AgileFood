@@ -55,7 +55,7 @@ public class StockItemService : IStockItemService
         if (stockItem == null)
             return false;
 
-        stockItem.RegisterEntry(dto.Quantity, dto.Reason);
+        stockItem.RegisterEntry(dto.Quantity, StockMovementOrigin.Manual, dto.Reason);
         await _unitOfWork.CommitAsync();
 
         return true;
@@ -68,7 +68,7 @@ public class StockItemService : IStockItemService
         if (stockItem == null)
             return false;
 
-        stockItem.RegisterExit(dto.Quantity, dto.Reason);
+        stockItem.RegisterExit(dto.Quantity, StockMovementOrigin.Manual, dto.Reason);
         await _unitOfWork.CommitAsync();
 
         return true;

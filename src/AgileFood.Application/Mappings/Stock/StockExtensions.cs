@@ -3,7 +3,7 @@ using AgileFood.Business.Models.Stock;
 
 namespace AgileFood.Application.Mappings.Stock;
 
-internal static class StockExtensions
+public static class StockExtensions
 {
     public static StockMovementResultDto MapToStockMovementDto(this StockMovement movement)
     {
@@ -12,8 +12,10 @@ internal static class StockExtensions
         return new StockMovementResultDto(
             movement.Id,
             movement.Type,
+            movement.Origin,
             movement.Quantity,
             movement.Reason,
+            movement.ConsumptionId,
             movement.Date
         );
     }
