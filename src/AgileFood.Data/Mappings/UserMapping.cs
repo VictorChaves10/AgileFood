@@ -23,7 +23,18 @@ public class UserMapping : IEntityTypeConfiguration<User>
         builder.HasIndex(u => u.Email)
                .IsUnique();
 
+        builder.Property(u => u.Cpf)
+               .IsRequired()
+               .HasMaxLength(11);
+
+        builder.HasIndex(u => u.Cpf)
+               .IsUnique();
+
         builder.Property(u => u.PasswordHash)
+               .IsRequired()
+               .HasMaxLength(500);
+
+        builder.Property(u => u.TransactionPinHash)
                .IsRequired()
                .HasMaxLength(500);
 

@@ -6,6 +6,7 @@ public record UserResultDto(
     long Id,
     string Name,
     string Email,
+    string Cpf,
     UserRole Role,
     bool IsActive,
     DateTime CreatedAt

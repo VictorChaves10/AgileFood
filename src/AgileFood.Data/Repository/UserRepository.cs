@@ -22,4 +22,10 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
         return await _context.Users
                              .FirstOrDefaultAsync(u => u.Email == email);
     }
+
+    public async Task<User?> GetByCpfAsync(string cpf)
+    {
+        return await _context.Users
+                             .FirstOrDefaultAsync(u => u.Cpf == cpf);
+    }
 }

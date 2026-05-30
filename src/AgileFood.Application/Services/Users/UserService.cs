@@ -24,9 +24,14 @@ public class UserService : IUserService
         if (existing is not null)
             throw new InvalidOperationException("Já existe um usuário com este e-mail.");
 
-        var user = new User(dto.Name, dto.Email, string.Empty, dto.Role);
-        var hash = _passwordHasher.HashPassword(user, dto.Password);
-        user.SetPasswordHash(hash);
+        var normalizedCpf = User.NormalizeCpf(dto.Cpf);
+        var existingCpf = await _unitOfWork.UserRepository.GetByCpfAsync(normalizedCpf);
+        if (existingCpf is not null)
+            throw new InvalidOperationException("Já existe um usuário com este CPF.");
+
+        var passwordHash = _passwordHasher.HashPassword(null!, dto.Password);
+        var transactionPinHash = _passwordHasher.HashPassword(null!, dto.TransactionPin);
+        var user = new User(dto.Name, dto.Email, normalizedCpf, passwordHash, transactionPinHash, dto.Role);
 
         _unitOfWork.UserRepository.Add(user);
         await _unitOfWork.CommitAsync();
@@ -36,11 +41,15 @@ public class UserService : IUserService
 
     public async Task<bool> ChangePasswordAsync(ChangePasswordDto dto)
     {
-        var user = await _unitOfWork.UserRepository.FindAsync(u => u.Id == dto.UserId);
+        var user = await _unitOfWork.UserRepository.GetByIdAsync(dto.UserId);
         if (user is null) return false;
 
-        var verification = _passwordHasher.VerifyHashedPassword(
-            user, user.PasswordHash, dto.CurrentPassword);
+        var verification = _passwordHasher
+            .VerifyHashedPassword(
+                user,
+                user.PasswordHash,
+                dto.CurrentPassword
+            );
 
         if (verification == PasswordVerificationResult.Failed)
             throw new InvalidOperationException("A senha atual está incorreta.");
@@ -54,10 +63,10 @@ public class UserService : IUserService
 
     public async Task<bool> DeleteAsync(long id)
     {
-        var user = await _unitOfWork.UserRepository.FindAsync(u => u.Id == id);
+        var user = await _unitOfWork.UserRepository.GetByIdAsync(id);
         if (user is null) return false;
 
-        _unitOfWork.UserRepository.Remove(user);
+        user.Deactivate();
         await _unitOfWork.CommitAsync();
         return true;
     }
@@ -80,10 +89,15 @@ public class UserService : IUserService
 
     public async Task<bool> UpdateAsync(UpdateUserDto dto)
     {
-        var user = await _unitOfWork.UserRepository.FindAsync(u => u.Id == dto.Id);
+        var user = await _unitOfWork.UserRepository.GetByIdAsync(dto.Id);
         if (user is null) return false;
 
-        user.Update(dto.Name, dto.Email, dto.Role, dto.IsActive);
+        var normalizedCpf = User.NormalizeCpf(dto.Cpf);
+        var existingCpf = await _unitOfWork.UserRepository.GetByCpfAsync(normalizedCpf);
+        if (existingCpf is not null && existingCpf.Id != dto.Id)
+            throw new InvalidOperationException("Já existe um usuário com este CPF.");
+
+        user.Update(dto.Name, dto.Email, normalizedCpf, dto.Role, dto.IsActive);
         await _unitOfWork.CommitAsync();
         return true;
     }

@@ -10,7 +10,11 @@ public class User
 
     public string Email { get; private set; }
 
+    public string Cpf { get; private set; }
+
     public string PasswordHash { get; private set; }
+
+    public string TransactionPinHash { get; private set; }
 
     public UserRole Role { get; private set; }
 
@@ -20,20 +24,23 @@ public class User
 
     protected User() { }
 
-    public User(string name, string email, string passwordHash, UserRole role)
+    public User(string name, string email, string cpf, string passwordHash, string transactionPinHash, UserRole role)
     {
         ChangeName(name);
         ChangeEmail(email);
+        ChangeCpf(cpf);
         SetPasswordHash(passwordHash);
+        SetTransactionPinHash(transactionPinHash);
         Role = role;
         IsActive = true;
         CreatedAt = DateTime.UtcNow;
     }
 
-    public void Update(string name, string email, UserRole role, bool isActive)
+    public void Update(string name, string email, string cpf, UserRole role, bool isActive)
     {
         if (Name != name) ChangeName(name);
         if (Email != email) ChangeEmail(email);
+        if (Cpf != NormalizeCpf(cpf)) ChangeCpf(cpf);
         if (Role != role) ChangeRole(role);
 
         if (isActive)
@@ -58,6 +65,16 @@ public class User
         Email = email;
     }
 
+    public void ChangeCpf(string cpf)
+    {
+        var normalizedCpf = NormalizeCpf(cpf);
+
+        if (!IsValidCpf(normalizedCpf))
+            throw new ArgumentException("O CPF informado não é válido.", nameof(cpf));
+
+        Cpf = normalizedCpf;
+    }
+
     public void SetPasswordHash(string passwordHash)
     {
         if (string.IsNullOrWhiteSpace(passwordHash))
@@ -66,9 +83,50 @@ public class User
         PasswordHash = passwordHash;
     }
 
+    public void SetTransactionPinHash(string transactionPinHash)
+    {
+        if (string.IsNullOrWhiteSpace(transactionPinHash))
+            throw new ArgumentException("O hash do PIN é obrigatório.", nameof(transactionPinHash));
+
+        TransactionPinHash = transactionPinHash;
+    }
+
     public void ChangeRole(UserRole role) => Role = role;
 
     public void Activate() => IsActive = true;
 
     public void Deactivate() => IsActive = false;
+
+    public static string NormalizeCpf(string cpf)
+    {
+        if (string.IsNullOrWhiteSpace(cpf))
+            return string.Empty;
+
+        return new string(cpf.Where(char.IsDigit).ToArray());
+    }
+
+    public static bool IsValidCpf(string cpf)
+    {
+        if (cpf.Length != 11)
+            return false;
+
+        if (cpf.Distinct().Count() == 1)
+            return false;
+
+        var firstDigit = CalculateCpfDigit(cpf, 9);
+        var secondDigit = CalculateCpfDigit(cpf, 10);
+
+        return cpf[9] - '0' == firstDigit && cpf[10] - '0' == secondDigit;
+    }
+
+    private static int CalculateCpfDigit(string cpf, int length)
+    {
+        var sum = 0;
+
+        for (var i = 0; i < length; i++)
+            sum += (cpf[i] - '0') * (length + 1 - i);
+
+        var remainder = sum % 11;
+        return remainder < 2 ? 0 : 11 - remainder;
+    }
 }

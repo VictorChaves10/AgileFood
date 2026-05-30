@@ -13,6 +13,7 @@ public static class UserExtensions
             user.Id,
             user.Name,
             user.Email,
+            user.Cpf,
             user.Role,
             user.IsActive,
             user.CreatedAt
