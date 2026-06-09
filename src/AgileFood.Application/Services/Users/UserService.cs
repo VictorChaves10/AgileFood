@@ -22,12 +22,12 @@ public class UserService : IUserService
     {
         var existing = await _unitOfWork.UserRepository.GetByEmailAsync(dto.Email);
         if (existing is not null)
-            throw new InvalidOperationException("Já existe um usuário com este e-mail.");
+            throw new InvalidOperationException("E-mail inválido.");
 
         var normalizedCpf = User.NormalizeCpf(dto.Cpf);
         var existingCpf = await _unitOfWork.UserRepository.GetByCpfAsync(normalizedCpf);
         if (existingCpf is not null)
-            throw new InvalidOperationException("Já existe um usuário com este CPF.");
+            throw new InvalidOperationException("CPF inválido.");
 
         var passwordHash = _passwordHasher.HashPassword(null!, dto.Password);
         var transactionPinHash = _passwordHasher.HashPassword(null!, dto.TransactionPin);

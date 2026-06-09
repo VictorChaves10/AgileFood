@@ -15,6 +15,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<StockMovement> StockMovements { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Consumption> Consumptions { get; set; }
+    public DbSet<ConsumptionItem> ConsumptionItems { get; set; }
     public DbSet<CatalogItem> CatalogItems { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

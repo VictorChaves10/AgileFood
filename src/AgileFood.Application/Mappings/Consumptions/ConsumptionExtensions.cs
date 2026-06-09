@@ -13,14 +13,26 @@ public static class ConsumptionExtensions
             consumption.Id,
             consumption.UserId,
             consumption.User?.Name,
-            consumption.ProductId,
-            consumption.Product?.Name,
-            consumption.Quantity,
-            consumption.UnitPrice,
+            consumption.GetTotalItems(),
             consumption.TotalPrice,
             consumption.ConsumedAt,
             consumption.ReferenceMonth,
-            consumption.ReferenceYear
+            consumption.ReferenceYear,
+            consumption.Items.Select(i => i.MapToConsumptionItemDto()).ToList()
+        );
+    }
+
+    public static ConsumptionItemResultDto MapToConsumptionItemDto(this ConsumptionItem item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        return new ConsumptionItemResultDto(
+            item.Id,
+            item.ProductId,
+            item.ProductName,
+            item.Quantity,
+            item.UnitPrice,
+            item.TotalPrice
         );
     }
 }

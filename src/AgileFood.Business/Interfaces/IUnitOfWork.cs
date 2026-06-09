@@ -3,6 +3,7 @@
 public interface IUnitOfWork : IDisposable
 {
     Task CommitAsync();
+    Task ExecuteInTransactionAsync(Func<Task> operation);
 
     IProductRepository ProductRepository { get; }
     IProductCategoryRepository ProductCategoryRepository { get; }

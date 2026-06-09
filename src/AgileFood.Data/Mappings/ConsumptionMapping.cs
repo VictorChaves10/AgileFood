@@ -15,16 +15,6 @@ public class ConsumptionMapping : IEntityTypeConfiguration<Consumption>
         builder.Property(c => c.UserId)
                .IsRequired();
 
-        builder.Property(c => c.ProductId)
-               .IsRequired();
-
-        builder.Property(c => c.Quantity)
-               .IsRequired();
-
-        builder.Property(c => c.UnitPrice)
-               .IsRequired()
-               .HasColumnType("decimal(18,2)");
-
         builder.Property(c => c.TotalPrice)
                .IsRequired()
                .HasColumnType("decimal(18,2)");
@@ -46,9 +36,13 @@ public class ConsumptionMapping : IEntityTypeConfiguration<Consumption>
                .HasForeignKey(c => c.UserId)
                .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasOne(c => c.Product)
-               .WithMany()
-               .HasForeignKey(c => c.ProductId)
-               .OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(c => c.Items)
+               .WithOne(i => i.Consumption)
+               .HasForeignKey(i => i.ConsumptionId)
+               .OnDelete(DeleteBehavior.Cascade);
+
+        builder.Metadata
+               .FindNavigation(nameof(Consumption.Items))!
+               .SetPropertyAccessMode(PropertyAccessMode.Field);
     }
 }

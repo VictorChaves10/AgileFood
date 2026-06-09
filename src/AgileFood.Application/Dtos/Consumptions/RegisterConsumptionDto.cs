@@ -1,7 +1,7 @@
 namespace AgileFood.Application.Dtos.Consumptions;
 
 public record RegisterConsumptionDto(
-    long UserId,
-    long ProductId,
-    int Quantity
+    string Cpf,
+    string Pin,
+    IReadOnlyCollection<RegisterConsumptionItemDto> Items
 );

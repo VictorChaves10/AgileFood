@@ -51,6 +51,22 @@ public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
         await _context.SaveChangesAsync();
     }
 
+    public async Task ExecuteInTransactionAsync(Func<Task> operation)
+    {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+
+        try
+        {
+            await operation();
+            await transaction.CommitAsync();
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
     public void Dispose()
     {
         if (!_disposed)

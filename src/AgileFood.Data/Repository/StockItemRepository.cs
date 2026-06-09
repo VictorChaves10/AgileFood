@@ -17,4 +17,14 @@ public class StockItemRepository : RepositoryBase<StockItem>, IStockItemReposito
                                         .Include(x => x.Movements)
                                         .FirstOrDefaultAsync(x => x.Id == id);
     }
+
+    public async Task<IEnumerable<StockItem>> GetAvailableByProductIdAsync(long productId)
+    {
+        return await _context.StockItems
+                             .Where(x => x.ProductId == productId && x.Quantity > 0)
+                             .OrderBy(x => x.ExpirationDate == null)
+                             .ThenBy(x => x.ExpirationDate)
+                             .ThenBy(x => x.CreatedAt)
+                             .ToListAsync();
+    }
 }
