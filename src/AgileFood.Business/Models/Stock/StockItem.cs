@@ -1,4 +1,5 @@
-﻿using AgileFood.Business.Models.Products;
+﻿using AgileFood.Business.Models.Consumptions;
+using AgileFood.Business.Models.Products;
 
 namespace AgileFood.Business.Models.Stock;
 
@@ -39,7 +40,7 @@ public class StockItem
         _movements.Add(new StockMovement(StockMovementType.Entry, origin, quantity, reason));
     }
 
-    public void RegisterExit(int quantity, StockMovementOrigin origin = StockMovementOrigin.Manual, string reason = "Saída", long? consumptionId = null)
+    public void RegisterExit(int quantity, StockMovementOrigin origin = StockMovementOrigin.Manual, string reason = "Saída", Consumption? consumption = null)
     {
         if (quantity <= 0)
             throw new ArgumentException("A quantidade removida deve ser maior que zero.", nameof(quantity));
@@ -48,7 +49,7 @@ public class StockItem
             throw new InvalidOperationException("Quantidade em estoque insuficiente.");
 
         Quantity -= quantity;
-        _movements.Add(new StockMovement(StockMovementType.Exit, origin, quantity, reason, consumptionId));
+        _movements.Add(new StockMovement(StockMovementType.Exit, origin, quantity, reason, consumption));
     }
 
     private void SetExpirationDate(DateTime? expirationDate)

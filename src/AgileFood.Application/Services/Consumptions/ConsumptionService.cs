@@ -63,57 +63,52 @@ public class ConsumptionService : IConsumptionService
 
         var consumption = new Consumption(user.Id);
 
-        await _unitOfWork.ExecuteInTransactionAsync(async () =>
+
+        foreach (var item in groupedItems)
         {
-            foreach (var item in groupedItems)
+            var product = await _unitOfWork.ProductRepository.GetByIdAsync(item.ProductId);
+            if (product is null)
+                throw new InvalidOperationException("Produto nao encontrado.");
+
+            if (!product.IsActive)
+                throw new InvalidOperationException($"Produto '{product.Name}' nao esta ativo.");
+
+            var stockItems = (await _unitOfWork.StockItemRepository.GetAvailableByProductIdAsync(item.ProductId)).ToList();
+            if (stockItems.Sum(s => s.Quantity) < item.Quantity)
+                throw new InvalidOperationException($"Estoque insuficiente para '{product.Name}'.");
+
+            consumption.AddItem(product.Id, product.Name, product.Price, item.Quantity);
+        }
+
+        _unitOfWork.ConsumptionRepository.Add(consumption);
+
+        foreach (var item in consumption.Items)
+        {
+            var remainingQuantity = item.Quantity;
+            var stockItems = (await _unitOfWork.StockItemRepository.GetAvailableByProductIdAsync(item.ProductId)).ToList();
+
+            foreach (var stockItem in stockItems)
             {
-                var product = await _unitOfWork.ProductRepository.GetByIdAsync(item.ProductId);
-                if (product is null)
-                    throw new InvalidOperationException("Produto nao encontrado.");
+                if (remainingQuantity == 0)
+                    break;
 
-                if (!product.IsActive)
-                    throw new InvalidOperationException($"Produto '{product.Name}' nao esta ativo.");
+                var quantityToRemove = Math.Min(stockItem.Quantity, remainingQuantity);
 
-                var stockItems = (await _unitOfWork.StockItemRepository.GetAvailableByProductIdAsync(item.ProductId)).ToList();
-                if (stockItems.Sum(s => s.Quantity) < item.Quantity)
-                    throw new InvalidOperationException($"Estoque insuficiente para '{product.Name}'.");
+                stockItem.RegisterExit(
+                    quantityToRemove,
+                    StockMovementOrigin.Consumption,
+                    $"Consumo #{user.Name} - {item.ProductName}",
+                    consumption
+                );
 
-                consumption.AddItem(product.Id, product.Name, product.Price, item.Quantity);
+                remainingQuantity -= quantityToRemove;
             }
 
-            _unitOfWork.ConsumptionRepository.Add(consumption);
-            await _unitOfWork.CommitAsync();
+            if (remainingQuantity > 0)
+                throw new InvalidOperationException($"Estoque insuficiente para '{item.ProductName}'.");
+        }
 
-            foreach (var item in consumption.Items)
-            {
-                var remainingQuantity = item.Quantity;
-                var stockItems = (await _unitOfWork.StockItemRepository.GetAvailableByProductIdAsync(item.ProductId)).ToList();
-
-                foreach (var stockItem in stockItems)
-                {
-                    if (remainingQuantity == 0)
-                        break;
-
-                    var quantityToRemove = Math.Min(stockItem.Quantity, remainingQuantity);
-
-                    stockItem.RegisterExit(
-                        quantityToRemove,
-                        StockMovementOrigin.Consumption,
-                        $"Consumo #{consumption.Id} - {user.Name} - {item.ProductName}",
-                        consumption.Id
-                    );
-
-                    remainingQuantity -= quantityToRemove;
-                }
-
-                if (remainingQuantity > 0)
-                    throw new InvalidOperationException($"Estoque insuficiente para '{item.ProductName}'.");
-            }
-
-            await _unitOfWork.CommitAsync();
-        });
-
+        await _unitOfWork.CommitAsync();
         return consumption.MapToConsumptionDto();
-
     }
 }
