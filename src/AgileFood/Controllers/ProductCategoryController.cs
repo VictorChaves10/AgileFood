@@ -1,11 +1,13 @@
 ﻿using AgileFood.Application.Dtos.ProductCategories;
 using AgileFood.Application.Interfaces.ProductCategories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgileFood.Api.Controllers;
 
 [Route("api/categorias")]
 [ApiController]
+[Authorize(Roles = "Admin")]
 public class ProductCategoryController : ControllerBase
 {
     private readonly IProductCategoryService _service;

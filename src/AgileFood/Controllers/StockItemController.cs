@@ -1,11 +1,13 @@
 ﻿using AgileFood.Application.Dtos.Stock;
 using AgileFood.Application.Interfaces.Stock;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgileFood.Api.Controllers;
 
 [Route("api/estoques")]
 [ApiController]
+[Authorize(Roles = "Admin")]
 public class StockItemController : Controller
 {
     private readonly IStockItemService _stockItemService;

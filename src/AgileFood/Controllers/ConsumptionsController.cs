@@ -1,11 +1,14 @@
+using AgileFood.Api.Auth;
 using AgileFood.Application.Dtos.Consumptions;
 using AgileFood.Application.Interfaces.Consumptions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgileFood.Api.Controllers;
 
 [Route("api/consumos")]
 [ApiController]
+[Authorize(AuthenticationSchemes = TerminalApiKeyDefaults.AuthenticationScheme)]
 public class ConsumptionsController : ControllerBase
 {
     private readonly IConsumptionService _consumptionService;

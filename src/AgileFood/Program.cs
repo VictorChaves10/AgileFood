@@ -1,9 +1,13 @@
+using System.Text;
+using AgileFood.Api.Auth;
+using AgileFood.Application.Interfaces.Auth;
 using AgileFood.Application.Interfaces.Catalogs;
 using AgileFood.Application.Interfaces.Consumptions;
 using AgileFood.Application.Interfaces.ProductCategories;
 using AgileFood.Application.Interfaces.Products;
 using AgileFood.Application.Interfaces.Stock;
 using AgileFood.Application.Interfaces.Users;
+using AgileFood.Application.Services.Auth;
 using AgileFood.Application.Services.Catalogs;
 using AgileFood.Application.Services.Consumptions;
 using AgileFood.Application.Services.ProductCategories;
@@ -15,14 +19,49 @@ using AgileFood.Business.Interfaces;
 using AgileFood.Data.Context;
 using AgileFood.Data.UnitOfWork;
 using FluentValidation;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Token JWT obtido em /api/auth/login. Informe apenas o token, sem o prefixo 'Bearer '.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    options.AddSecurityDefinition(TerminalApiKeyDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+    {
+        Description = "Chave do dispositivo do terminal físico.",
+        Name = TerminalApiKeyDefaults.HeaderName,
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
+            Array.Empty<string>()
+        },
+        {
+            new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = TerminalApiKeyDefaults.AuthenticationScheme } },
+            Array.Empty<string>()
+        }
+    });
+});
 builder.Services.AddProblemDetails();
 builder.Services.AddValidatorsFromAssemblyContaining<CreateUserValidator>();
 
@@ -31,6 +70,33 @@ var configuration = builder.Configuration;
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
+var jwtSettings = configuration.GetSection("Jwt").Get<JwtSettings>() ?? new JwtSettings();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtSettings.Issuer,
+            ValidAudience = jwtSettings.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key))
+        };
+    })
+    .AddScheme<AuthenticationSchemeOptions, TerminalApiKeyAuthenticationHandler>(
+        TerminalApiKeyDefaults.AuthenticationScheme, null);
+
+builder.Services.AddAuthorization(options =>
+{
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
+});
+
 // Services
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
@@ -38,6 +104,8 @@ builder.Services.AddScoped<IStockItemService, StockItemService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IConsumptionService, ConsumptionService>();
 builder.Services.AddScoped<ICatalogService, CatalogService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITokenService, JwtTokenService>();
 
 // Unit of Work
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
@@ -77,6 +145,7 @@ app.UseExceptionHandler(errorApp =>
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

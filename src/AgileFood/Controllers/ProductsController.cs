@@ -1,12 +1,14 @@
 ﻿using AgileFood.Application.Dtos;
 using AgileFood.Application.Dtos.Products;
 using AgileFood.Application.Interfaces.Products;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgileFood.Api.Controllers;
 
 [Route("api/produtos")]
 [ApiController]
+[Authorize(Roles = "Admin")]
 public class ProductsController : ControllerBase
 {
 

@@ -1,11 +1,13 @@
 using AgileFood.Application.Dtos.Users;
 using AgileFood.Application.Interfaces.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AgileFood.Api.Controllers;
 
 [Route("api/usuarios")]
 [ApiController]
+[Authorize(Roles = "Admin")]
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
