@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using AgileFood.Application.Dtos.Users;
 using AgileFood.Application.Interfaces.Users;
 using AgileFood.Application.Mappings.Users;
@@ -41,7 +42,7 @@ public class UserService : IUserService
 
     public async Task<bool> ChangePasswordAsync(ChangePasswordDto dto)
     {
-        var user = await _unitOfWork.UserRepository.GetByIdAsync(dto.UserId);
+        var user = await _unitOfWork.UserRepository.FindAsync(u => u.Id == dto.UserId);
         if (user is null) return false;
 
         var verification = _passwordHasher
@@ -55,7 +56,52 @@ public class UserService : IUserService
             throw new InvalidOperationException("A senha atual está incorreta.");
 
         var newHash = _passwordHasher.HashPassword(user, dto.NewPassword);
-        user.SetPasswordHash(newHash);
+        user.CompletePasswordChange(newHash);
+
+        await _unitOfWork.CommitAsync();
+        return true;
+    }
+
+    public async Task<string?> ResetPasswordAsync(long userId)
+    {
+        var user = await _unitOfWork.UserRepository.FindAsync(u => u.Id == userId);
+        if (user is null) return null;
+
+        var temporaryPassword = GenerateTemporaryPassword();
+        var newHash = _passwordHasher.HashPassword(user, temporaryPassword);
+        user.SetPasswordAsTemporary(newHash);
+
+        await _unitOfWork.CommitAsync();
+        return temporaryPassword;
+    }
+
+    private static string GenerateTemporaryPassword()
+    {
+        const string allowedChars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789";
+        var buffer = RandomNumberGenerator.GetItems<char>(allowedChars, 10);
+        return new string(buffer);
+    }
+
+    public async Task<bool> ChangeTransactionPinAsync(ChangeTransactionPinDto dto)
+    {
+        var user = await _unitOfWork.UserRepository.FindAsync(u => u.Id == dto.UserId);
+        if (user is null) return false;
+
+        var verification = _passwordHasher
+            .VerifyHashedPassword(
+                user,
+                user.TransactionPinHash,
+                dto.CurrentPin
+            );
+
+        if (verification == PasswordVerificationResult.Failed)
+            throw new InvalidOperationException("O PIN atual está incorreto.");
+
+        if (string.IsNullOrWhiteSpace(dto.NewPin) || dto.NewPin.Length != 4 || !dto.NewPin.All(char.IsDigit))
+            throw new InvalidOperationException("O novo PIN deve ter exatamente 4 dígitos.");
+
+        var newHash = _passwordHasher.HashPassword(user, dto.NewPin);
+        user.SetTransactionPinHash(newHash);
 
         await _unitOfWork.CommitAsync();
         return true;
@@ -63,7 +109,7 @@ public class UserService : IUserService
 
     public async Task<bool> DeleteAsync(long id)
     {
-        var user = await _unitOfWork.UserRepository.GetByIdAsync(id);
+        var user = await _unitOfWork.UserRepository.FindAsync(u => u.Id == id);
         if (user is null) return false;
 
         user.Deactivate();
@@ -89,7 +135,7 @@ public class UserService : IUserService
 
     public async Task<bool> UpdateAsync(UpdateUserDto dto)
     {
-        var user = await _unitOfWork.UserRepository.GetByIdAsync(dto.Id);
+        var user = await _unitOfWork.UserRepository.FindAsync(u => u.Id == dto.Id);
         if (user is null) return false;
 
         var normalizedCpf = User.NormalizeCpf(dto.Cpf);

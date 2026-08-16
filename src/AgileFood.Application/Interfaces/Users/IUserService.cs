@@ -10,4 +10,6 @@ public interface IUserService
     Task<bool> UpdateAsync(UpdateUserDto dto);
     Task<bool> DeleteAsync(long id);
     Task<bool> ChangePasswordAsync(ChangePasswordDto dto);
+    Task<bool> ChangeTransactionPinAsync(ChangeTransactionPinDto dto);
+    Task<string?> ResetPasswordAsync(long userId);
 }

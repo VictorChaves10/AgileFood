@@ -36,4 +36,26 @@ public class AuthController : ControllerBase
             user
         });
     }
+
+    [HttpPost("esqueci-senha")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto dto)
+    {
+        if (dto is null)
+            return BadRequest("O e-mail é obrigatório.");
+
+        await _authService.RequestPasswordResetAsync(dto);
+
+        return Ok(new { message = "Se o e-mail informado existir, enviamos um código de redefinição de senha." });
+    }
+
+    [HttpPost("redefinir-senha")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+    {
+        if (dto is null)
+            return BadRequest("O e-mail, o código e a nova senha são obrigatórios.");
+
+        await _authService.ResetPasswordAsync(dto);
+
+        return NoContent();
+    }
 }

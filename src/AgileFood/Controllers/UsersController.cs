@@ -69,4 +69,15 @@ public class UsersController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpPost("{id:long}/redefinir-senha")]
+    public async Task<IActionResult> ResetPassword(long id)
+    {
+        var temporaryPassword = await _userService.ResetPasswordAsync(id);
+
+        if (temporaryPassword is null)
+            return NotFound("Usuario nao localizado.");
+
+        return Ok(new { temporaryPassword });
+    }
 }

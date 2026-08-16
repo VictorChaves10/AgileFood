@@ -16,6 +16,7 @@ public static class UserExtensions
             user.Cpf,
             user.Role,
             user.IsActive,
+            user.MustChangePassword,
             user.CreatedAt
         );
     }

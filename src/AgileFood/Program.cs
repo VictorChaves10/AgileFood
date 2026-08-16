@@ -1,8 +1,10 @@
 using System.Text;
 using AgileFood.Api.Auth;
+using AgileFood.Application.Configuration;
 using AgileFood.Application.Interfaces.Auth;
 using AgileFood.Application.Interfaces.Catalogs;
 using AgileFood.Application.Interfaces.Consumptions;
+using AgileFood.Application.Interfaces.Notifications;
 using AgileFood.Application.Interfaces.ProductCategories;
 using AgileFood.Application.Interfaces.Products;
 using AgileFood.Application.Interfaces.Stock;
@@ -10,6 +12,7 @@ using AgileFood.Application.Interfaces.Users;
 using AgileFood.Application.Services.Auth;
 using AgileFood.Application.Services.Catalogs;
 using AgileFood.Application.Services.Consumptions;
+using AgileFood.Application.Services.Notifications;
 using AgileFood.Application.Services.ProductCategories;
 using AgileFood.Application.Services.Products;
 using AgileFood.Application.Services.Stock;
@@ -35,11 +38,12 @@ builder.Services.AddSwaggerGen(options =>
 {
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Token JWT obtido em /api/auth/login. Informe apenas o token, sem o prefixo 'Bearer '.",
+        Description = "Token JWT obtido em /api/auth/login. Informe no formato: Bearer {seu token}.",
         Name = "Authorization",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
     });
 
     options.AddSecurityDefinition(TerminalApiKeyDefaults.AuthenticationScheme, new OpenApiSecurityScheme
@@ -72,6 +76,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.Configure<JwtSettings>(configuration.GetSection("Jwt"));
 var jwtSettings = configuration.GetSection("Jwt").Get<JwtSettings>() ?? new JwtSettings();
+
+builder.Services.Configure<SmtpSettings>(configuration.GetSection("Smtp"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -106,6 +112,7 @@ builder.Services.AddScoped<IConsumptionService, ConsumptionService>();
 builder.Services.AddScoped<ICatalogService, CatalogService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITokenService, JwtTokenService>();
+builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
 
 // Unit of Work
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();

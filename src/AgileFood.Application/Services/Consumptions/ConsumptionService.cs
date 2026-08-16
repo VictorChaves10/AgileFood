@@ -111,4 +111,22 @@ public class ConsumptionService : IConsumptionService
         await _unitOfWork.CommitAsync();
         return consumption.MapToConsumptionDto();
     }
+
+    public async Task<IEnumerable<ConsumptionResultDto>> GetByUserAsync(long userId)
+    {
+        var consumptions = await _unitOfWork.ConsumptionRepository.GetByUserIdAsync(userId);
+        return consumptions.Select(c => c.MapToConsumptionDto());
+    }
+
+    public async Task<IEnumerable<MonthlyConsumptionSummaryDto>> GetMonthlySummaryByUserAsync(long userId)
+    {
+        var consumptions = await _unitOfWork.ConsumptionRepository.GetByUserIdAsync(userId);
+
+        return consumptions
+            .GroupBy(c => new { c.ReferenceYear, c.ReferenceMonth })
+            .Select(g => new MonthlyConsumptionSummaryDto(g.Key.ReferenceYear, g.Key.ReferenceMonth, g.Sum(c => c.TotalPrice), g.Count()))
+            .OrderByDescending(s => s.ReferenceYear)
+            .ThenByDescending(s => s.ReferenceMonth)
+            .ToList();
+    }
 }

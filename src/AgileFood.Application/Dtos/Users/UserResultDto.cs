@@ -9,5 +9,6 @@ public record UserResultDto(
     string Cpf,
     UserRole Role,
     bool IsActive,
+    bool MustChangePassword,
     DateTime CreatedAt
 );

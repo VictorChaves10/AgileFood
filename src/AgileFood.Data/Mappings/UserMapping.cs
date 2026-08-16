@@ -44,6 +44,13 @@ public class UserMapping : IEntityTypeConfiguration<User>
         builder.Property(u => u.IsActive)
                .IsRequired();
 
+        builder.Property(u => u.MustChangePassword)
+               .IsRequired()
+               .HasDefaultValue(false);
+
+        builder.Property(u => u.PasswordResetTokenHash)
+               .HasMaxLength(64);
+
         builder.Property(u => u.CreatedAt)
                .IsRequired();
     }
