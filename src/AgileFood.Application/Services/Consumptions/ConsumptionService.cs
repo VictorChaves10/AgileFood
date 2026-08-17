@@ -1,6 +1,7 @@
 using AgileFood.Application.Dtos.Consumptions;
 using AgileFood.Application.Interfaces.Consumptions;
 using AgileFood.Application.Mappings.Consumptions;
+using AgileFood.Business.Exceptions;
 using AgileFood.Business.Interfaces;
 using AgileFood.Business.Models.Consumptions;
 using AgileFood.Business.Models.Stock;
@@ -37,14 +38,25 @@ public class ConsumptionService : IConsumptionService
         if (!user.IsActive)
             throw new InvalidOperationException("Usuário não está ativo.");
 
+        var now = DateTime.UtcNow;
+
+        if (user.IsPinLocked(now))
+            throw new AccountLockedException(
+                "PIN bloqueado temporariamente por excesso de tentativas inválidas. Tente novamente mais tarde.");
+
         if (string.IsNullOrWhiteSpace(pin) || pin.Length != 4 || !pin.All(char.IsDigit))
             throw new InvalidOperationException("PIN invalido.");
 
         var verification = _passwordHasher.VerifyHashedPassword(user, user.TransactionPinHash, pin);
 
         if (verification == PasswordVerificationResult.Failed)
+        {
+            user.RegisterFailedPinAttempt(now);
+            await _unitOfWork.CommitAsync();
             throw new InvalidOperationException("PIN invalido.");
+        }
 
+        user.ResetPinAttempts();
         return user;
     }
 

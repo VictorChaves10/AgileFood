@@ -23,6 +23,9 @@ public class StockItemMapping : IEntityTypeConfiguration<StockItem>
         builder.Property(si => si.CreatedAt)
                .IsRequired();
 
+        builder.Property(si => si.RowVersion)
+               .IsRowVersion();
+
         builder.HasOne(si => si.Product)
                .WithMany()
                .HasForeignKey(si => si.ProductId)

@@ -17,6 +17,8 @@ public class StockItem
 
     public DateTime CreatedAt { get; private set; }
 
+    public byte[] RowVersion { get; private set; } = Array.Empty<byte>();
+
     private readonly List<StockMovement> _movements = new();
 
     public IReadOnlyCollection<StockMovement> Movements => _movements;

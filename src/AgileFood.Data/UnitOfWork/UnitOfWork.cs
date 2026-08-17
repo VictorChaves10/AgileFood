@@ -1,6 +1,8 @@
-﻿using AgileFood.Business.Interfaces;
+﻿using AgileFood.Business.Exceptions;
+using AgileFood.Business.Interfaces;
 using AgileFood.Data.Context;
 using AgileFood.Data.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace AgileFood.Data.UnitOfWork;
 
@@ -48,7 +50,15 @@ public class UnitOfWork(ApplicationDbContext context) : IUnitOfWork
 
     public async Task CommitAsync()
     {
-        await _context.SaveChangesAsync();
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            throw new ConcurrencyConflictException(
+                "O registro foi alterado por outra operação simultânea. Tente novamente.");
+        }
     }
 
     public async Task ExecuteInTransactionAsync(Func<Task> operation)

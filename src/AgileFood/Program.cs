@@ -18,6 +18,7 @@ using AgileFood.Application.Services.Products;
 using AgileFood.Application.Services.Stock;
 using AgileFood.Application.Services.Users;
 using AgileFood.Application.Validators.Users;
+using AgileFood.Business.Exceptions;
 using AgileFood.Business.Interfaces;
 using AgileFood.Data.Context;
 using AgileFood.Data.UnitOfWork;
@@ -134,7 +135,17 @@ app.UseExceptionHandler(errorApp =>
         {
             ArgumentException => StatusCodes.Status400BadRequest,
             InvalidOperationException => StatusCodes.Status400BadRequest,
+            AccountLockedException => StatusCodes.Status429TooManyRequests,
+            ConcurrencyConflictException => StatusCodes.Status409Conflict,
             _ => StatusCodes.Status500InternalServerError
+        };
+
+        var title = statusCode switch
+        {
+            StatusCodes.Status429TooManyRequests => "Muitas tentativas.",
+            StatusCodes.Status409Conflict => "Conflito de concorrência.",
+            StatusCodes.Status500InternalServerError => "Erro interno.",
+            _ => "Requisicao invalida."
         };
 
         context.Response.StatusCode = statusCode;
@@ -142,9 +153,7 @@ app.UseExceptionHandler(errorApp =>
         await context.Response.WriteAsJsonAsync(new
         {
             status = statusCode,
-            title = statusCode == StatusCodes.Status500InternalServerError
-                ? "Erro interno."
-                : "Requisicao invalida.",
+            title,
             detail = exception?.Message
         });
     });

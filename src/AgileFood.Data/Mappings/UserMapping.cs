@@ -51,6 +51,10 @@ public class UserMapping : IEntityTypeConfiguration<User>
         builder.Property(u => u.PasswordResetTokenHash)
                .HasMaxLength(64);
 
+        builder.Property(u => u.FailedPinAttempts)
+               .IsRequired()
+               .HasDefaultValue(0);
+
         builder.Property(u => u.CreatedAt)
                .IsRequired();
     }

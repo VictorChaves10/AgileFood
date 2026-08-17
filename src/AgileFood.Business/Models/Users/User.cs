@@ -26,7 +26,14 @@ public class User
 
     public DateTime? PasswordResetTokenExpiresAtUtc { get; private set; }
 
+    public int FailedPinAttempts { get; private set; }
+
+    public DateTime? PinLockedUntilUtc { get; private set; }
+
     public DateTime CreatedAt { get; private set; }
+
+    private const int MaxFailedPinAttempts = 5;
+    private static readonly TimeSpan PinLockDuration = TimeSpan.FromMinutes(15);
 
     protected User() { }
 
@@ -132,6 +139,26 @@ public class User
         PasswordResetTokenHash is not null &&
         PasswordResetTokenExpiresAtUtc is not null &&
         PasswordResetTokenExpiresAtUtc.Value > nowUtc;
+
+    public bool IsPinLocked(DateTime nowUtc) =>
+        PinLockedUntilUtc is not null && PinLockedUntilUtc.Value > nowUtc;
+
+    public void RegisterFailedPinAttempt(DateTime nowUtc)
+    {
+        FailedPinAttempts++;
+
+        if (FailedPinAttempts >= MaxFailedPinAttempts)
+        {
+            PinLockedUntilUtc = nowUtc.Add(PinLockDuration);
+            FailedPinAttempts = 0;
+        }
+    }
+
+    public void ResetPinAttempts()
+    {
+        FailedPinAttempts = 0;
+        PinLockedUntilUtc = null;
+    }
 
     public static string NormalizeCpf(string cpf)
     {
