@@ -28,4 +28,10 @@ public class UserRepository : RepositoryBase<User>, IUserRepository
         return await _context.Users
                              .FirstOrDefaultAsync(u => u.Cpf == cpf);
     }
+
+    public async Task<User?> GetByEmployeeCodeAsync(string employeeCode)
+    {
+        return await _context.Users
+                             .FirstOrDefaultAsync(u => u.EmployeeCode == employeeCode);
+    }
 }

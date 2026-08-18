@@ -7,6 +7,7 @@ public record UserResultDto(
     string Name,
     string Email,
     string Cpf,
+    string? EmployeeCode,
     UserRole Role,
     bool IsActive,
     bool MustChangePassword,

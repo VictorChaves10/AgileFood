@@ -23,14 +23,13 @@ public class ConsumptionService : IConsumptionService
 
     public async Task<ConsumptionResultDto> RegisterConsumptionAsync(RegisterConsumptionDto dto)
     {
-        var user = await ValidateUserAndPinAsync(dto.Cpf, dto.Pin);
+        var user = await ValidateUserAndPinAsync(dto.EmployeeCode, dto.Pin);
         return await RegisterCartForUserAsync(user, dto.Items);
     }
 
-    private async Task<User> ValidateUserAndPinAsync(string cpf, string pin)
+    private async Task<User> ValidateUserAndPinAsync(string employeeCode, string pin)
     {
-        var normalizedCpf = User.NormalizeCpf(cpf);
-        var user = await _unitOfWork.UserRepository.GetByCpfAsync(normalizedCpf);
+        var user = await _unitOfWork.UserRepository.GetByEmployeeCodeAsync(employeeCode);
 
         if (user is null)
             throw new InvalidOperationException("Usuário não encontrado.");

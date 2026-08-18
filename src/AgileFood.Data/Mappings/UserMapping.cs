@@ -30,6 +30,13 @@ public class UserMapping : IEntityTypeConfiguration<User>
         builder.HasIndex(u => u.Cpf)
                .IsUnique();
 
+        builder.Property(u => u.EmployeeCode)
+               .HasMaxLength(20);
+
+        builder.HasIndex(u => u.EmployeeCode)
+               .IsUnique()
+               .HasFilter("[EmployeeCode] IS NOT NULL");
+
         builder.Property(u => u.PasswordHash)
                .IsRequired()
                .HasMaxLength(500);

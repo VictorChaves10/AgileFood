@@ -14,6 +14,7 @@ public static class UserExtensions
             user.Name,
             user.Email,
             user.Cpf,
+            user.EmployeeCode,
             user.Role,
             user.IsActive,
             user.MustChangePassword,

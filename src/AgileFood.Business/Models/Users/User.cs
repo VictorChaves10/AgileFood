@@ -12,6 +12,8 @@ public class User
 
     public string Cpf { get; private set; }
 
+    public string? EmployeeCode { get; private set; }
+
     public string PasswordHash { get; private set; }
 
     public string TransactionPinHash { get; private set; }
@@ -86,6 +88,14 @@ public class User
             throw new ArgumentException("O CPF informado não é válido.", nameof(cpf));
 
         Cpf = normalizedCpf;
+    }
+
+    public void SetEmployeeCode(string employeeCode)
+    {
+        if (string.IsNullOrWhiteSpace(employeeCode))
+            throw new ArgumentException("O código do funcionário é obrigatório.", nameof(employeeCode));
+
+        EmployeeCode = employeeCode;
     }
 
     public void SetPasswordHash(string passwordHash)

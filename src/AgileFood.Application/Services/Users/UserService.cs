@@ -34,8 +34,14 @@ public class UserService : IUserService
         var transactionPinHash = _passwordHasher.HashPassword(null!, dto.TransactionPin);
         var user = new User(dto.Name, dto.Email, normalizedCpf, passwordHash, transactionPinHash, dto.Role);
 
-        _unitOfWork.UserRepository.Add(user);
-        await _unitOfWork.CommitAsync();
+        await _unitOfWork.ExecuteInTransactionAsync(async () =>
+        {
+            _unitOfWork.UserRepository.Add(user);
+            await _unitOfWork.CommitAsync();
+
+            user.SetEmployeeCode(user.Id.ToString("D6"));
+            await _unitOfWork.CommitAsync();
+        });
 
         return user.MapToUserDto();
     }
