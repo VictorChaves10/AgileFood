@@ -19,7 +19,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPut("senha")]
-    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestDto request)
     {
         if (request is null)
             return BadRequest("A senha atual e a nova senha são obrigatórias.");
@@ -34,7 +34,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPut("pin")]
-    public async Task<IActionResult> ChangeTransactionPin([FromBody] ChangeTransactionPinRequest request)
+    public async Task<IActionResult> ChangeTransactionPin([FromBody] ChangeTransactionPinRequestDto request)
     {
         if (request is null)
             return BadRequest("O PIN atual e o novo PIN são obrigatórios.");
@@ -54,7 +54,3 @@ public class AccountController : ControllerBase
         return long.Parse(value!);
     }
 }
-
-public record ChangePasswordRequest(string CurrentPassword, string NewPassword);
-
-public record ChangeTransactionPinRequest(string CurrentPin, string NewPin);
