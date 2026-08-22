@@ -1,3 +1,4 @@
+using AgileFood.Business.Exceptions;
 ﻿using AgileFood.Business.Models.Consumptions;
 using AgileFood.Business.Models.Products;
 
@@ -36,7 +37,7 @@ public class StockItem
     public void RegisterEntry(int quantity, StockMovementOrigin origin = StockMovementOrigin.Manual, string reason = "Entrada")
     {
         if (quantity <= 0)
-            throw new ArgumentException("A quantidade adicionada deve ser maior que zero.", nameof(quantity));
+            throw new DomainException("A quantidade adicionada deve ser maior que zero.");
 
         Quantity += quantity;
         _movements.Add(new StockMovement(StockMovementType.Entry, origin, quantity, reason));
@@ -45,10 +46,10 @@ public class StockItem
     public void RegisterExit(int quantity, StockMovementOrigin origin = StockMovementOrigin.Manual, string reason = "Saída", Consumption? consumption = null)
     {
         if (quantity <= 0)
-            throw new ArgumentException("A quantidade removida deve ser maior que zero.", nameof(quantity));
+            throw new DomainException("A quantidade removida deve ser maior que zero.");
 
         if (Quantity < quantity)
-            throw new InvalidOperationException("Quantidade em estoque insuficiente.");
+            throw new DomainException("Quantidade em estoque insuficiente.");
 
         Quantity -= quantity;
         _movements.Add(new StockMovement(StockMovementType.Exit, origin, quantity, reason, consumption));
@@ -57,7 +58,7 @@ public class StockItem
     private void SetExpirationDate(DateTime? expirationDate)
     {
         if (expirationDate.HasValue && expirationDate.Value <= DateTime.UtcNow)
-            throw new ArgumentException("Data de validade deve ser futura.");
+            throw new DomainException("Data de validade deve ser futura.");
 
         ExpirationDate = expirationDate;
     }

@@ -1,0 +1,37 @@
+using AgileFood.Business.Interfaces;
+using AgileFood.Business.Models.Users;
+using AgileFood.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
+
+namespace AgileFood.Infrastructure.Repository;
+
+public class UserRepository : RepositoryBase<User>, IUserRepository
+{
+    public UserRepository(ApplicationDbContext context) : base(context)
+    {
+    }
+
+    public async Task<User?> GetByIdAsync(long id)
+    {
+        return await _context.Users.AsNoTracking()
+                             .FirstOrDefaultAsync(u => u.Id == id);
+    }
+
+    public async Task<User?> GetByEmailAsync(string email)
+    {
+        return await _context.Users
+                             .FirstOrDefaultAsync(u => u.Email == email);
+    }
+
+    public async Task<User?> GetByCpfAsync(string cpf)
+    {
+        return await _context.Users
+                             .FirstOrDefaultAsync(u => u.Cpf == cpf);
+    }
+
+    public async Task<User?> GetByEmployeeCodeAsync(string employeeCode)
+    {
+        return await _context.Users
+                             .FirstOrDefaultAsync(u => u.EmployeeCode == employeeCode);
+    }
+}

@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgileFood.Application", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgileFood.Business", "src\AgileFood.Business\AgileFood.Business.csproj", "{6AEBE293-FAE6-4D89-B5A1-2BD2DD7F66D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgileFood.Data", "src\AgileFood.Data\AgileFood.Data.csproj", "{98831600-4466-44E0-A5C1-5C66A1845FC4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgileFood.Infrastructure", "src\AgileFood.Infrastructure\AgileFood.Infrastructure.csproj", "{98831600-4466-44E0-A5C1-5C66A1845FC4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "AgileFood", "AgileFood", "{D529AB64-8B2B-EACC-17FD-A5ACCA39178D}"
 EndProject

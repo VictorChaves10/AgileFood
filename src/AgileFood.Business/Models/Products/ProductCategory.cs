@@ -1,3 +1,4 @@
+using AgileFood.Business.Exceptions;
 ﻿namespace AgileFood.Business.Models.Products;
 
 public class ProductCategory
@@ -18,7 +19,7 @@ public class ProductCategory
     public void ChangeName(string name)
     {
         if(string.IsNullOrEmpty(name))
-            throw new ArgumentException("O nome da categoria é obrigatório.", nameof(name));
+            throw new DomainException("O nome da categoria é obrigatório.");
 
         Name = name;
     }

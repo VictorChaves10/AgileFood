@@ -3,9 +3,10 @@ using System.Text;
 using AgileFood.Application.Dtos.Auth;
 using AgileFood.Application.Dtos.Users;
 using AgileFood.Application.Interfaces.Auth;
-using AgileFood.Application.Interfaces.Notifications;
 using AgileFood.Application.Mappings.Users;
+using AgileFood.Business.Exceptions;
 using AgileFood.Business.Interfaces;
+using AgileFood.Business.Interfaces.Notifications;
 using AgileFood.Business.Models.Users;
 using Microsoft.AspNetCore.Identity;
 
@@ -31,12 +32,12 @@ public class AuthService : IAuthService
         var user = await _unitOfWork.UserRepository.GetByEmailAsync(dto.Email);
 
         if (user is null || !user.IsActive)
-            throw new InvalidOperationException("E-mail ou senha inválidos.");
+            throw new DomainException("E-mail ou senha inválidos.");
 
         var verification = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
 
         if (verification == PasswordVerificationResult.Failed)
-            throw new InvalidOperationException("E-mail ou senha inválidos.");
+            throw new DomainException("E-mail ou senha inválidos.");
 
         return user.MapToUserDto();
     }
@@ -68,15 +69,15 @@ public class AuthService : IAuthService
         var user = await _unitOfWork.UserRepository.GetByEmailAsync(dto.Email);
 
         if (user is null || !user.HasValidPasswordResetToken(DateTime.UtcNow))
-            throw new InvalidOperationException("Token de redefinição inválido ou expirado.");
+            throw new DomainException("Token de redefinição inválido ou expirado.");
 
         var providedTokenHash = HashResetToken(dto.Token);
 
         if (!FixedTimeEquals(providedTokenHash, user.PasswordResetTokenHash!))
-            throw new InvalidOperationException("Token de redefinição inválido ou expirado.");
+            throw new DomainException("Token de redefinição inválido ou expirado.");
 
         if (string.IsNullOrWhiteSpace(dto.NewPassword) || dto.NewPassword.Length < 6)
-            throw new InvalidOperationException("A senha deve ter no mínimo 6 caracteres.");
+            throw new DomainException("A senha deve ter no mínimo 6 caracteres.");
 
         var newHash = _passwordHasher.HashPassword(user, dto.NewPassword);
         user.CompletePasswordChange(newHash);

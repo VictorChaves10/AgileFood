@@ -1,3 +1,4 @@
+using AgileFood.Business.Exceptions;
 using AgileFood.Business.Models.Users.Enums;
 
 namespace AgileFood.Business.Models.Users;
@@ -67,7 +68,7 @@ public class User
     public void ChangeName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("O nome do usuário é obrigatório.", nameof(name));
+            throw new DomainException("O nome do usuário é obrigatório.");
 
         Name = name;
     }
@@ -75,7 +76,7 @@ public class User
     public void ChangeEmail(string email)
     {
         if (string.IsNullOrWhiteSpace(email))
-            throw new ArgumentException("O e-mail é obrigatório.", nameof(email));
+            throw new DomainException("O e-mail é obrigatório.");
 
         Email = email;
     }
@@ -85,7 +86,7 @@ public class User
         var normalizedCpf = NormalizeCpf(cpf);
 
         if (!IsValidCpf(normalizedCpf))
-            throw new ArgumentException("O CPF informado não é válido.", nameof(cpf));
+            throw new DomainException("O CPF informado não é válido.");
 
         Cpf = normalizedCpf;
     }

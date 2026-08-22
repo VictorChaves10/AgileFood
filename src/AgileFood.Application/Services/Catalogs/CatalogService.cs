@@ -1,6 +1,7 @@
 using AgileFood.Application.Dtos.Catalogs;
 using AgileFood.Application.Interfaces.Catalogs;
 using AgileFood.Application.Mappings.Catalogs;
+using AgileFood.Business.Exceptions;
 using AgileFood.Business.Interfaces;
 using AgileFood.Business.Models.Catalogs;
 
@@ -34,11 +35,11 @@ public class CatalogService : ICatalogService
     {
         var existing = await _unitOfWork.CatalogItemRepository.GetByProductIdAsync(dto.ProductId);
         if (existing is not null)
-            throw new InvalidOperationException("Este produto já está no catálogo.");
+            throw new DomainException("Este produto já está no catálogo.");
 
         var product = await _unitOfWork.ProductRepository.GetByIdAsync(dto.ProductId);
         if (product is null)
-            throw new InvalidOperationException("Produto não encontrado.");
+            throw new DomainException("Produto não encontrado.");
 
         var catalogItem = new CatalogItem(dto.ProductId);
 

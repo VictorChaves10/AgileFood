@@ -1,3 +1,4 @@
+using AgileFood.Business.Exceptions;
 ﻿using AgileFood.Business.Models.Weights;
 
 namespace AgileFood.Business.Models.Products;
@@ -84,7 +85,7 @@ public class Product
     public void ChangeName(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            throw new ArgumentException("O nome do produto é obrigatório.", nameof(name));
+            throw new DomainException("O nome do produto é obrigatório.");
 
         Name = name;
     }
@@ -102,7 +103,7 @@ public class Product
     public void ChangePrice(decimal newPrice)
     {
         if (newPrice <= 0)
-            throw new ArgumentException("O preço deve ser maior que zero.", nameof(newPrice));
+            throw new DomainException("O preço deve ser maior que zero.");
 
         Price = newPrice;
     }
@@ -114,7 +115,7 @@ public class Product
     public void ChangeCategory(int categoryId)
     {
         if (categoryId <= 0)
-            throw new ArgumentException("O id da categoria não pode ser nulo.", nameof(categoryId));
+            throw new DomainException("A categoria do produto é obrigatória.");
 
         ProductCategoryId = categoryId;
     }

@@ -2,6 +2,7 @@ using System.Security.Cryptography;
 using AgileFood.Application.Dtos.Users;
 using AgileFood.Application.Interfaces.Users;
 using AgileFood.Application.Mappings.Users;
+using AgileFood.Business.Exceptions;
 using AgileFood.Business.Interfaces;
 using AgileFood.Business.Models.Users;
 using Microsoft.AspNetCore.Identity;
@@ -23,12 +24,12 @@ public class UserService : IUserService
     {
         var existing = await _unitOfWork.UserRepository.GetByEmailAsync(dto.Email);
         if (existing is not null)
-            throw new InvalidOperationException("E-mail inválido.");
+            throw new DomainException("E-mail inválido.");
 
         var normalizedCpf = User.NormalizeCpf(dto.Cpf);
         var existingCpf = await _unitOfWork.UserRepository.GetByCpfAsync(normalizedCpf);
         if (existingCpf is not null)
-            throw new InvalidOperationException("CPF inválido.");
+            throw new DomainException("CPF inválido.");
 
         var passwordHash = _passwordHasher.HashPassword(null!, dto.Password);
         var transactionPinHash = _passwordHasher.HashPassword(null!, dto.TransactionPin);
@@ -59,7 +60,7 @@ public class UserService : IUserService
             );
 
         if (verification == PasswordVerificationResult.Failed)
-            throw new InvalidOperationException("A senha atual está incorreta.");
+            throw new DomainException("A senha atual está incorreta.");
 
         var newHash = _passwordHasher.HashPassword(user, dto.NewPassword);
         user.CompletePasswordChange(newHash);
@@ -101,10 +102,10 @@ public class UserService : IUserService
             );
 
         if (verification == PasswordVerificationResult.Failed)
-            throw new InvalidOperationException("O PIN atual está incorreto.");
+            throw new DomainException("O PIN atual está incorreto.");
 
         if (string.IsNullOrWhiteSpace(dto.NewPin) || dto.NewPin.Length != 4 || !dto.NewPin.All(char.IsDigit))
-            throw new InvalidOperationException("O novo PIN deve ter exatamente 4 dígitos.");
+            throw new DomainException("O novo PIN deve ter exatamente 4 dígitos.");
 
         var newHash = _passwordHasher.HashPassword(user, dto.NewPin);
         user.SetTransactionPinHash(newHash);
@@ -147,7 +148,7 @@ public class UserService : IUserService
         var normalizedCpf = User.NormalizeCpf(dto.Cpf);
         var existingCpf = await _unitOfWork.UserRepository.GetByCpfAsync(normalizedCpf);
         if (existingCpf is not null && existingCpf.Id != dto.Id)
-            throw new InvalidOperationException("Já existe um usuário com este CPF.");
+            throw new DomainException("Já existe um usuário com este CPF.");
 
         user.Update(dto.Name, dto.Email, normalizedCpf, dto.Role, dto.IsActive);
         await _unitOfWork.CommitAsync();

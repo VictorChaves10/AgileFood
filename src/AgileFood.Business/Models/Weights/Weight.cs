@@ -1,3 +1,4 @@
+using AgileFood.Business.Exceptions;
 ﻿namespace AgileFood.Business.Models.Weights;
 
 public class Weight
@@ -11,10 +12,10 @@ public class Weight
     public Weight(decimal amount, WeightUnitEnum unit)
     {
         if (amount <= 0)
-            throw new ArgumentException("A quantidade deve ser maior que zero.");
+            throw new DomainException("A quantidade deve ser maior que zero.");
 
         if (!Enum.IsDefined(typeof(WeightUnitEnum), unit))
-            throw new ArgumentException("Unidade de peso inválida.");
+            throw new DomainException("Unidade de peso inválida.");
 
         Amount = amount;
         Unit = unit;

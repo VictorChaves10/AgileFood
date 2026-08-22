@@ -32,10 +32,10 @@ public class ConsumptionService : IConsumptionService
         var user = await _unitOfWork.UserRepository.GetByEmployeeCodeAsync(employeeCode);
 
         if (user is null)
-            throw new InvalidOperationException("Usuário não encontrado.");
+            throw new DomainException("Usuário não encontrado.");
 
         if (!user.IsActive)
-            throw new InvalidOperationException("Usuário não está ativo.");
+            throw new DomainException("Usuário não está ativo.");
 
         var now = DateTime.UtcNow;
 
@@ -44,7 +44,7 @@ public class ConsumptionService : IConsumptionService
                 "PIN bloqueado temporariamente por excesso de tentativas inválidas. Tente novamente mais tarde.");
 
         if (string.IsNullOrWhiteSpace(pin) || pin.Length != 4 || !pin.All(char.IsDigit))
-            throw new InvalidOperationException("PIN invalido.");
+            throw new DomainException("PIN invalido.");
 
         var verification = _passwordHasher.VerifyHashedPassword(user, user.TransactionPinHash, pin);
 
@@ -52,7 +52,7 @@ public class ConsumptionService : IConsumptionService
         {
             user.RegisterFailedPinAttempt(now);
             await _unitOfWork.CommitAsync();
-            throw new InvalidOperationException("PIN invalido.");
+            throw new DomainException("PIN invalido.");
         }
 
         user.ResetPinAttempts();
@@ -62,7 +62,7 @@ public class ConsumptionService : IConsumptionService
     private async Task<ConsumptionResultDto> RegisterCartForUserAsync(User user, IReadOnlyCollection<RegisterConsumptionItemDto> items)
     {
         if (items is null || items.Count == 0)
-            throw new InvalidOperationException("O carrinho está vazio.");
+            throw new DomainException("O carrinho está vazio.");
 
         var groupedItems = items
             .GroupBy(i => i.ProductId)
@@ -70,7 +70,7 @@ public class ConsumptionService : IConsumptionService
             .ToList();
 
         if (groupedItems.Any(i => i.ProductId <= 0 || i.Quantity <= 0))
-            throw new InvalidOperationException("O carrinho possui itens invalidos.");
+            throw new DomainException("O carrinho possui itens invalidos.");
 
         var consumption = new Consumption(user.Id);
 
@@ -79,14 +79,14 @@ public class ConsumptionService : IConsumptionService
         {
             var product = await _unitOfWork.ProductRepository.GetByIdAsync(item.ProductId);
             if (product is null)
-                throw new InvalidOperationException("Produto nao encontrado.");
+                throw new DomainException("Produto nao encontrado.");
 
             if (!product.IsActive)
-                throw new InvalidOperationException($"Produto '{product.Name}' nao esta ativo.");
+                throw new DomainException($"Produto '{product.Name}' nao esta ativo.");
 
             var stockItems = (await _unitOfWork.StockItemRepository.GetAvailableByProductIdAsync(item.ProductId)).ToList();
             if (stockItems.Sum(s => s.Quantity) < item.Quantity)
-                throw new InvalidOperationException($"Estoque insuficiente para '{product.Name}'.");
+                throw new DomainException($"Estoque insuficiente para '{product.Name}'.");
 
             consumption.AddItem(product.Id, product.Name, product.Price, item.Quantity);
         }
@@ -116,7 +116,7 @@ public class ConsumptionService : IConsumptionService
             }
 
             if (remainingQuantity > 0)
-                throw new InvalidOperationException($"Estoque insuficiente para '{item.ProductName}'.");
+                throw new DomainException($"Estoque insuficiente para '{item.ProductName}'.");
         }
 
         await _unitOfWork.CommitAsync();
