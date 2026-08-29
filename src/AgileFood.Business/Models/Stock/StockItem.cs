@@ -1,5 +1,5 @@
 using AgileFood.Business.Exceptions;
-﻿using AgileFood.Business.Models.Consumptions;
+using AgileFood.Business.Models.Consumptions;
 using AgileFood.Business.Models.Products;
 
 namespace AgileFood.Business.Models.Stock;
@@ -26,24 +26,24 @@ public class StockItem
 
     protected StockItem() { }
 
-    public StockItem(long productId, int initialQuantity, DateTime? expirationDate = null)
+    public StockItem(long productId, int initialQuantity, DateTime nowUtc, DateTime? expirationDate = null)
     {
         ProductId = productId;
-        CreatedAt = DateTime.UtcNow;
-        SetExpirationDate(expirationDate);
-        RegisterEntry(initialQuantity, StockMovementOrigin.InitialStock, "Estoque inicial");
+        CreatedAt = nowUtc;
+        SetExpirationDate(expirationDate, nowUtc);
+        RegisterEntry(initialQuantity, nowUtc, StockMovementOrigin.InitialStock, "Estoque inicial");
     }
 
-    public void RegisterEntry(int quantity, StockMovementOrigin origin = StockMovementOrigin.Manual, string reason = "Entrada")
+    public void RegisterEntry(int quantity, DateTime nowUtc, StockMovementOrigin origin = StockMovementOrigin.Manual, string reason = "Entrada")
     {
         if (quantity <= 0)
             throw new DomainException("A quantidade adicionada deve ser maior que zero.");
 
         Quantity += quantity;
-        _movements.Add(new StockMovement(StockMovementType.Entry, origin, quantity, reason));
+        _movements.Add(new StockMovement(StockMovementType.Entry, origin, quantity, reason, nowUtc));
     }
 
-    public void RegisterExit(int quantity, StockMovementOrigin origin = StockMovementOrigin.Manual, string reason = "Saída", Consumption? consumption = null)
+    public void RegisterExit(int quantity, DateTime nowUtc, StockMovementOrigin origin = StockMovementOrigin.Manual, string reason = "Saída", Consumption? consumption = null)
     {
         if (quantity <= 0)
             throw new DomainException("A quantidade removida deve ser maior que zero.");
@@ -52,12 +52,12 @@ public class StockItem
             throw new DomainException("Quantidade em estoque insuficiente.");
 
         Quantity -= quantity;
-        _movements.Add(new StockMovement(StockMovementType.Exit, origin, quantity, reason, consumption));
+        _movements.Add(new StockMovement(StockMovementType.Exit, origin, quantity, reason, nowUtc, consumption));
     }
 
-    private void SetExpirationDate(DateTime? expirationDate)
+    private void SetExpirationDate(DateTime? expirationDate, DateTime nowUtc)
     {
-        if (expirationDate.HasValue && expirationDate.Value <= DateTime.UtcNow)
+        if (expirationDate.HasValue && expirationDate.Value <= nowUtc)
             throw new DomainException("Data de validade deve ser futura.");
 
         ExpirationDate = expirationDate;

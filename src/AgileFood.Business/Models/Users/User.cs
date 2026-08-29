@@ -40,7 +40,7 @@ public class User
 
     protected User() { }
 
-    public User(string name, string email, string cpf, string passwordHash, string transactionPinHash, UserRole role)
+    public User(string name, string email, string cpf, string passwordHash, string transactionPinHash, UserRole role, DateTime nowUtc)
     {
         ChangeName(name);
         ChangeEmail(email);
@@ -49,7 +49,7 @@ public class User
         SetTransactionPinHash(transactionPinHash);
         Role = role;
         IsActive = true;
-        CreatedAt = DateTime.UtcNow;
+        CreatedAt = nowUtc;
     }
 
     public void Update(string name, string email, string cpf, UserRole role, bool isActive)

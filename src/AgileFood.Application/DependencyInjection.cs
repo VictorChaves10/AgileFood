@@ -13,8 +13,11 @@ using AgileFood.Application.Services.Products;
 using AgileFood.Application.Services.Stock;
 using AgileFood.Application.Services.Users;
 using AgileFood.Application.Validators.Users;
+using AgileFood.Business.Models.Users;
 using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace AgileFood.Application;
 
@@ -31,6 +34,9 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
 
         services.AddValidatorsFromAssemblyContaining<CreateUserValidator>();
+
+        services.TryAddSingleton(TimeProvider.System);
+        services.TryAddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
 
         return services;
     }

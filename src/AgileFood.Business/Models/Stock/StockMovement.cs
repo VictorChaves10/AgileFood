@@ -24,13 +24,13 @@ public class StockMovement
 
     protected StockMovement() { }
 
-    internal StockMovement(StockMovementType type, StockMovementOrigin origin, int quantity, string reason, Consumption? consumption = null)
+    internal StockMovement(StockMovementType type, StockMovementOrigin origin, int quantity, string reason, DateTime nowUtc, Consumption? consumption = null)
     {
         Type = type;
         Origin = origin;
         Quantity = quantity;
         Reason = reason;
         Consumption = consumption;
-        Date = DateTime.UtcNow;
+        Date = nowUtc;
     }
 }

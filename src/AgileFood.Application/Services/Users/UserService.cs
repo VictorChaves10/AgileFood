@@ -12,12 +12,17 @@ namespace AgileFood.Application.Services.Users;
 public class UserService : IUserService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly PasswordHasher<User> _passwordHasher;
+    private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly TimeProvider _timeProvider;
 
-    public UserService(IUnitOfWork unitOfWork)
+    public UserService(
+        IUnitOfWork unitOfWork,
+        IPasswordHasher<User> passwordHasher,
+        TimeProvider timeProvider)
     {
         _unitOfWork = unitOfWork;
-        _passwordHasher = new PasswordHasher<User>();
+        _passwordHasher = passwordHasher;
+        _timeProvider = timeProvider;
     }
 
     public async Task<UserResultDto> CreateAsync(CreateUserDto dto)
@@ -33,7 +38,8 @@ public class UserService : IUserService
 
         var passwordHash = _passwordHasher.HashPassword(null!, dto.Password);
         var transactionPinHash = _passwordHasher.HashPassword(null!, dto.TransactionPin);
-        var user = new User(dto.Name, dto.Email, normalizedCpf, passwordHash, transactionPinHash, dto.Role);
+        var user = new User(dto.Name, dto.Email, normalizedCpf, passwordHash, transactionPinHash, dto.Role,
+            _timeProvider.GetUtcNow().UtcDateTime);
 
         await _unitOfWork.ExecuteInTransactionAsync(async () =>
         {

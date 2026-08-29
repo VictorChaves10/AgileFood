@@ -18,14 +18,22 @@ public class AuthService : IAuthService
 
     private readonly IUnitOfWork _unitOfWork;
     private readonly IEmailSender _emailSender;
-    private readonly PasswordHasher<User> _passwordHasher;
+    private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly TimeProvider _timeProvider;
 
-    public AuthService(IUnitOfWork unitOfWork, IEmailSender emailSender)
+    public AuthService(
+        IUnitOfWork unitOfWork,
+        IEmailSender emailSender,
+        IPasswordHasher<User> passwordHasher,
+        TimeProvider timeProvider)
     {
         _unitOfWork = unitOfWork;
         _emailSender = emailSender;
-        _passwordHasher = new PasswordHasher<User>();
+        _passwordHasher = passwordHasher;
+        _timeProvider = timeProvider;
     }
+
+    private DateTime UtcNow => _timeProvider.GetUtcNow().UtcDateTime;
 
     public async Task<UserResultDto> LoginAsync(LoginDto dto)
     {
@@ -52,7 +60,7 @@ public class AuthService : IAuthService
         var token = GenerateResetToken();
         var tokenHash = HashResetToken(token);
 
-        user.SetPasswordResetToken(tokenHash, DateTime.UtcNow.AddMinutes(ResetTokenExpirationMinutes));
+        user.SetPasswordResetToken(tokenHash, UtcNow.AddMinutes(ResetTokenExpirationMinutes));
         await _unitOfWork.CommitAsync();
 
         var body =
@@ -68,7 +76,7 @@ public class AuthService : IAuthService
     {
         var user = await _unitOfWork.UserRepository.GetByEmailAsync(dto.Email);
 
-        if (user is null || !user.HasValidPasswordResetToken(DateTime.UtcNow))
+        if (user is null || !user.HasValidPasswordResetToken(UtcNow))
             throw new DomainException("Token de redefinição inválido ou expirado.");
 
         var providedTokenHash = HashResetToken(dto.Token);

@@ -24,13 +24,13 @@ public class Consumption
 
     protected Consumption() { }
 
-    public Consumption(long userId)
+    public Consumption(long userId, DateTime nowUtc)
     {
         if (userId <= 0)
             throw new ArgumentException("O usuario e obrigatorio.", nameof(userId));
 
         UserId = userId;
-        ConsumedAt = DateTime.UtcNow;
+        ConsumedAt = nowUtc;
         ReferenceMonth = ConsumedAt.Month;
         ReferenceYear = ConsumedAt.Year;
     }

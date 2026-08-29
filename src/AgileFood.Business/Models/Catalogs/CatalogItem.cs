@@ -16,11 +16,11 @@ public class CatalogItem
 
     protected CatalogItem() { }
 
-    public CatalogItem(long productId)
+    public CatalogItem(long productId, DateTime nowUtc)
     {
         SetProduct(productId);
         IsAvailable = true;
-        CreatedAt = DateTime.UtcNow;
+        CreatedAt = nowUtc;
     }
 
     private void SetProduct(long productId)

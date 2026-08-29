@@ -9,10 +9,12 @@ namespace AgileFood.Application.Services.Stock;
 public class StockItemService : IStockItemService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly TimeProvider _timeProvider;
 
-    public StockItemService(IUnitOfWork unitOfWork)
+    public StockItemService(IUnitOfWork unitOfWork, TimeProvider timeProvider)
     {
         _unitOfWork = unitOfWork;
+        _timeProvider = timeProvider;
     }
 
     public async Task<StockItemResultDto> CreateAsync(CreateStockItemDto stockItemDto)
@@ -20,6 +22,7 @@ public class StockItemService : IStockItemService
         var stockItem = new StockItem(
             stockItemDto.ProductId,
             stockItemDto.InitialQuantity,
+            _timeProvider.GetUtcNow().UtcDateTime,
             stockItemDto.ExpirationDate
         );
 
@@ -55,7 +58,7 @@ public class StockItemService : IStockItemService
         if (stockItem == null)
             return false;
 
-        stockItem.RegisterEntry(dto.Quantity, StockMovementOrigin.Manual, dto.Reason);
+        stockItem.RegisterEntry(dto.Quantity, _timeProvider.GetUtcNow().UtcDateTime, StockMovementOrigin.Manual, dto.Reason);
         await _unitOfWork.CommitAsync();
 
         return true;
@@ -68,7 +71,7 @@ public class StockItemService : IStockItemService
         if (stockItem == null)
             return false;
 
-        stockItem.RegisterExit(dto.Quantity, StockMovementOrigin.Manual, dto.Reason);
+        stockItem.RegisterExit(dto.Quantity, _timeProvider.GetUtcNow().UtcDateTime, StockMovementOrigin.Manual, dto.Reason);
         await _unitOfWork.CommitAsync();
 
         return true;

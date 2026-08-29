@@ -13,12 +13,17 @@ namespace AgileFood.Application.Services.Consumptions;
 public class ConsumptionService : IConsumptionService
 {
     private readonly IUnitOfWork _unitOfWork;
-    private readonly PasswordHasher<User> _passwordHasher;
+    private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly TimeProvider _timeProvider;
 
-    public ConsumptionService(IUnitOfWork unitOfWork)
+    public ConsumptionService(
+        IUnitOfWork unitOfWork,
+        IPasswordHasher<User> passwordHasher,
+        TimeProvider timeProvider)
     {
         _unitOfWork = unitOfWork;
-        _passwordHasher = new PasswordHasher<User>();
+        _passwordHasher = passwordHasher;
+        _timeProvider = timeProvider;
     }
 
     public async Task<ConsumptionResultDto> RegisterConsumptionAsync(RegisterConsumptionDto dto)
@@ -37,7 +42,7 @@ public class ConsumptionService : IConsumptionService
         if (!user.IsActive)
             throw new DomainException("Usuário não está ativo.");
 
-        var now = DateTime.UtcNow;
+        var now = _timeProvider.GetUtcNow().UtcDateTime;
 
         if (user.IsPinLocked(now))
             throw new AccountLockedException(
@@ -72,7 +77,8 @@ public class ConsumptionService : IConsumptionService
         if (groupedItems.Any(i => i.ProductId <= 0 || i.Quantity <= 0))
             throw new DomainException("O carrinho possui itens invalidos.");
 
-        var consumption = new Consumption(user.Id);
+        var nowUtc = _timeProvider.GetUtcNow().UtcDateTime;
+        var consumption = new Consumption(user.Id, nowUtc);
 
 
         foreach (var item in groupedItems)
@@ -107,6 +113,7 @@ public class ConsumptionService : IConsumptionService
 
                 stockItem.RegisterExit(
                     quantityToRemove,
+                    nowUtc,
                     StockMovementOrigin.Consumption,
                     $"Consumo #{user.Name} - {item.ProductName}",
                     consumption

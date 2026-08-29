@@ -10,10 +10,12 @@ namespace AgileFood.Application.Services.Catalogs;
 public class CatalogService : ICatalogService
 {
     private readonly IUnitOfWork _unitOfWork;
+    private readonly TimeProvider _timeProvider;
 
-    public CatalogService(IUnitOfWork unitOfWork)
+    public CatalogService(IUnitOfWork unitOfWork, TimeProvider timeProvider)
     {
         _unitOfWork = unitOfWork;
+        _timeProvider = timeProvider;
     }
 
     public async Task<IEnumerable<CatalogItemResultDto>> GetAvailableItemsAsync()
@@ -41,7 +43,7 @@ public class CatalogService : ICatalogService
         if (product is null)
             throw new DomainException("Produto não encontrado.");
 
-        var catalogItem = new CatalogItem(dto.ProductId);
+        var catalogItem = new CatalogItem(dto.ProductId, _timeProvider.GetUtcNow().UtcDateTime);
 
         _unitOfWork.CatalogItemRepository.Add(catalogItem);
         await _unitOfWork.CommitAsync();
